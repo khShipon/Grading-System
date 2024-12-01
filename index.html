@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grading System with PDF Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Grading System</h1>
+    <h2 id="institution-name">Institution Name</h2>
+    <div class="container">
+        <form id="institution-form">
+            <input type="text" id="institution-input" placeholder="Enter institution name" required>
+            <button type="button" id="set-institution-name">Set Institution Name</button>
+        </form>
+        <form id="grading-table-title-form">
+            <input type="text" id="grading-table-title" placeholder="Enter table title (e.g., 'Student Grading Table')" required>
+            <button type="button" id="set-table-title">Set Table Title</button>
+        </form>
+        <form id="total-marks-form">
+            <input type="number" id="total-marks" placeholder="Enter total marks" required>
+            <button type="button" id="set-total-marks">Set Total Marks</button>
+        </form>
+        <form id="grading-form" style="display: none;">
+            <input type="text" id="student-name" placeholder="Enter student name" required>
+            <input type="number" id="student-marks" placeholder="Enter student marks" required>
+            <button type="submit">Add Student</button>
+            <div class="error" id="error-message"></div>
+        </form>
+        <button id="download-pdf" style="display: none;">Download Table as PDF</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Serial</th>
+                    <th>Name</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody id="grading-table">
+                <!-- Table rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        const totalMarksForm = document.getElementById('total-marks-form');
+        const gradingForm = document.getElementById('grading-form');
+        const gradingTable = document.getElementById('grading-table');
+        const errorMessage = document.getElementById('error-message');
+        const downloadPdfBtn = document.getElementById('download-pdf');
+        const institutionForm = document.getElementById('institution-form');
+        const institutionName = document.getElementById('institution-name');
+        const institutionInput = document.getElementById('institution-input');
+        const tableTitleInput = document.getElementById('grading-table-title');
+        let tableTitle = "Student Grading Table";
+
+        let totalMarks = null;
+        const students = [];
+
+        const gradeRanges = [
+            { grade: 'A+', min: 80, max: 100, color: 'green' },
+            { grade: 'A', min: 70, max: 79, color: 'green' },
+            { grade: 'A-', min: 60, max: 69, color: 'green' },
+            { grade: 'B', min: 50, max: 59, color: 'blue' },
+            { grade: 'C', min: 40, max: 49, color: 'blue' },
+            { grade: 'D', min: 33, max: 39, color: 'red' },
+            { grade: 'F', min: 0, max: 32, color: 'red' },
+        ];
+
+        function calculateGrade(marks) {
+            const percentage = (marks / totalMarks) * 100;
+            for (const range of gradeRanges) {
+                if (percentage >= range.min && percentage <= range.max) {
+                    return range;
+                }
+            }
+            return { grade: 'Invalid', color: 'black' };
+        }
+
+        function capitalizeName(name) {
+            return name
+                .toLowerCase()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
+        function updateTable() {
+            gradingTable.innerHTML = '';
+            students.sort((a, b) => b.marks - a.marks);
+
+            students.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><b>${student.name}</b></td>
+                    <td>${student.marks}</td>
+                    <td style="color: ${student.grade.color};"><b>${student.grade.grade}</b></td>
+                `;
+                gradingTable.appendChild(row);
+            });
+        }
+
+        function downloadTableAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text(institutionName.textContent, 105, 20, { align: 'center' });
+            doc.text(tableTitle, 105, 30, { align: 'center' });
+
+            const tableBody = students.map((student, index) => [
+                index + 1,
+                { content: student.name, styles: { fontStyle: 'bold' } },
+                student.marks,
+                {
+                    content: student.grade.grade,
+                    styles: { textColor: student.grade.color === 'red' ? [255, 0, 0] : student.grade.color === 'green' ? [0, 128, 0] : [0, 0, 255] },
+                },
+            ]);
+
+            doc.autoTable({
+                head: [['Serial', 'Name', 'Marks', 'Grade']],
+                body: tableBody,
+                startY: 40,
+            });
+
+            doc.save('GradingTable.pdf');
+        }
+
+        document.getElementById('set-institution-name').addEventListener('click', () => {
+            const input = institutionInput.value.trim();
+            if (input) {
+                institutionName.textContent = input;
+                institutionForm.style.display = 'none';
+            }
+        });
+
+        document.getElementById('set-table-title').addEventListener('click', () => {
+            const input = tableTitleInput.value.trim();
+            if (input) {
+                tableTitle = input;
+                tableTitleInput.style.display = 'none';
+            }
+        });
+
+        document.getElementById('set-total-marks').addEventListener('click', () => {
+            const input = document.getElementById('total-marks').value;
+            totalMarks = parseInt(input);
+            if (isNaN(totalMarks) || totalMarks <= 0) {
+                alert('Please enter a valid total marks value.');
+                return;
+            }
+
+            gradingForm.style.display = 'block';
+            downloadPdfBtn.style.display = 'inline-block';
+            totalMarksForm.style.display = 'none';
+        });
+
+        gradingForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const studentName = document.getElementById('student-name').value.trim();
+            const studentMarks = parseInt(document.getElementById('student-marks').value);
+
+            if (isNaN(studentMarks) || studentMarks < 0 || studentMarks > totalMarks) {
+                errorMessage.textContent = 'Please enter valid marks within the total marks range.';
+                return;
+            }
+
+            errorMessage.textContent = '';
+            const grade = calculateGrade(studentMarks);
+            students.push({ name: capitalizeName(studentName), marks: studentMarks, grade });
+
+            updateTable();
+            gradingForm.reset();
+        });
+
+        downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
+    </script>
+</body>
+</html>
