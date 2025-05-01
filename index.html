@@ -4,112 +4,261 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grading System with PDF Download</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #dfe6e9;
-            --secondary-color: #b2bec3;
-            --accent-color: #74b9ff;
-            --success-color: #55efc4;
-            --warning-color: #ffeaa7;
-            --danger-color: #fab1a0;
-            --light-color: #f5f5f5;
-            --dark-color: #636e72;
-            --border-color: #dcdde1;
+            --primary-color: #4a90e2; /* Blue */
+            --secondary-color: #f4f7f6; /* Light grey background */
+            --accent-color: #50e3c2;  /* Teal accent */
+            --success-color: #7ed321; /* Green */
+            --warning-color: #f5a623; /* Orange */
+            --danger-color: #d0021b;  /* Red */
+            --light-color: #ffffff;  /* White */
+            --dark-color: #4a4a4a;   /* Dark Grey text */
+            --border-color: #e1e1e1; /* Lighter border */
+            --header-bg: #f8f9fa;   /* Light bg for table header */
+            --hover-bg: #e9ecef;    /* Subtle hover */
+            --text-muted: #8c8c8c; /* Muted text color */
         }
 
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: var(--light-color);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--secondary-color);
             color: var(--dark-color);
+            line-height: 1.6;
         }
 
-        h1, h2 {
+        h1 {
             text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-weight: 500;
             color: var(--dark-color);
+            margin: 5px 0; /* Reduced margin for h2 */
         }
 
         .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--light-color);
             border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
         }
 
         .header-section {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .institution-wrapper, .title-wrapper {
-            display: inline-flex;
+            display: flex; /* Use flex for better alignment */
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             position: relative;
+            margin-bottom: 10px; /* Space between title/institution if they wrap */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
 
         .edit-btn {
-            padding: 5px 15px;
-            background: var(--accent-color);
+            padding: 6px 14px;
+            background: var(--hover-bg);
             color: var(--dark-color);
-            border: none;
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            display: flex;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex; /* Use inline-flex */
             align-items: center;
             gap: 5px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .edit-btn:hover {
-            background: #a29bfe;
+            background: #dce1e4;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         form {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 10px;
+            align-items: center;
         }
 
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
+        #grading-form {
+            background-color: var(--secondary-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            flex-grow: 1; /* Allow inputs to grow */
+            min-width: 150px; /* Minimum width */
+            padding: 12px 15px;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            background-color: #3a7bc8; /* Darker blue */
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+        }
+        button:active {
+             transform: scale(0.98);
+             box-shadow: 0 2px 5px rgba(74, 144, 226, 0.2);
+         }
+
+        /* Specific Button Styles */
+        #download-pdf {
+             background-color: var(--accent-color);
+             color: var(--dark-color);
+             margin-top: 15px; /* Add some space above */
+        }
+        #download-pdf:hover {
+             background-color: #40c3a2; /* Darker teal */
+             box-shadow: 0 4px 10px rgba(80, 227, 194, 0.3);
+        }
+         #download-pdf:active {
+             transform: scale(0.98);
+             box-shadow: 0 2px 5px rgba(80, 227, 194, 0.2);
+         }
+
+        .error {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            width: 100%; /* Take full width in form */
+            min-height: 20px; /* Reserve space */
+            font-weight: 500;
+            padding-left: 5px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            overflow: hidden; /* Important for rounded corners on table */
         }
 
         th, td {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            text-align: center;
+            padding: 14px 18px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left; /* Default left align */
+            vertical-align: middle;
         }
 
         th {
-            background-color: var(--primary-color);
+            background-color: var(--header-bg);
             color: var(--dark-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            border-bottom-width: 2px; /* Thicker border below header */
+        }
+
+        /* Center specific columns */
+        th:first-child, td:first-child, /* Serial */
+        th:nth-child(3), td:nth-child(3), /* Marks */
+        th:last-child, td:last-child { /* Grade */
+            text-align: center;
+        }
+
+        /* Remove border from last row */
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Zebra striping */
+        tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+
+        /* Row hover effect */
+        tr:hover {
+            background-color: var(--hover-bg);
         }
 
         td.editable {
             cursor: pointer;
-            background-color: var(--light-color);
-            transition: background-color 0.3s ease;
+            background-color: transparent; /* Use transparent bg */
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 4px; /* Slight rounding for focus */
+            position: relative; /* For potential pseudo-elements if needed */
         }
 
         td.editable:hover {
-            background-color: var(--primary-color);
+            background-color: rgba(74, 144, 226, 0.1); /* Subtle blueish hover */
         }
 
         td.editable:focus {
             background-color: white;
-            outline: 2px solid var(--accent-color);
-            outline-offset: -2px;
+            outline: none; /* Remove default outline */
+            box-shadow: inset 0 0 0 2px var(--primary-color); /* Inset shadow as outline */
+            z-index: 1; /* Ensure focus style is on top */
         }
+
+        /* Style Grade Cell */
+        td b { /* Targeting the bold grade text */
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 15px; /* Pill shape */
+            font-size: 13px;
+            font-weight: 600;
+            color: white; /* Text color for grades */
+            min-width: 40px; /* Ensure minimum width */
+            text-align: center;
+        }
+
+        /* Grade-specific background colors */
+        td[data-grade-color] b {
+             background-color: var(--grade-color, var(--dark-color)); /* Use dynamic color */
+        }
+
 
         .modal {
             display: none;
@@ -118,42 +267,82 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.65); /* Darker overlay */
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show { /* Class to show modal with transition */
+            display: flex;
+            opacity: 1;
         }
 
         .modal-content {
             background: white;
-            padding: 20px;
+            padding: 25px 30px;
             border-radius: 8px;
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
         }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .modal-content input[type="text"] {
+            width: 100%; /* Full width inside modal */
+            margin-bottom: 15px;
+        }
+
 
         .modal-buttons {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-            margin-top: 15px;
+            margin-top: 25px;
         }
 
         .save-btn, .cancel-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .save-btn {
-            background: var(--accent-color);
-            color: var(--dark-color);
+            background: var(--primary-color);
+            color: white;
+        }
+        .save-btn:hover {
+             background-color: #3a7bc8;
+             box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
         }
 
         .cancel-btn {
             background: var(--secondary-color);
             color: var(--dark-color);
+            border: 1px solid var(--border-color);
+        }
+        .cancel-btn:hover {
+             background-color: var(--hover-bg);
         }
 
         .save-feedback {
@@ -162,20 +351,22 @@
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--success-color);
-            color: var(--dark-color);
+            color: var(--dark-color); /* Or white if contrast is better */
             padding: 8px 16px;
             border-radius: 4px;
             font-size: 14px;
             margin-top: 10px;
             animation: fadeInOut 2s ease-in-out;
             white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 5; /* Ensure it's above buttons */
         }
 
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            0% { opacity: 0; transform: translate(-50%, -10px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -10px); }
         }
     </style>
 </head>
@@ -194,16 +385,19 @@
         </div>
 
         <form id="total-marks-form">
-            <input type="number" id="total-marks" placeholder="Enter total marks" required>
+            <input type="number" id="total-marks" placeholder="Enter total marks (e.g., 100)" required step="any">
             <button type="button" id="set-total-marks">Set Total Marks</button>
         </form>
+
         <form id="grading-form" style="display: none;">
-            <input type="text" id="student-name" placeholder="Enter student name" required>
-            <input type="number" id="student-marks" placeholder="Enter student marks" required>
+            <input type="text" id="student-name" placeholder="Student name" required>
+            <input type="number" id="student-marks" placeholder="Marks obtained (e.g., 85.5)" required step="any">
             <button type="submit">Add Student</button>
             <div class="error" id="error-message"></div>
         </form>
+
         <button id="download-pdf" style="display: none;">Download Table as PDF</button>
+
         <table>
             <thead>
                 <tr>
@@ -226,8 +420,8 @@
             <form id="institution-form">
                 <input type="text" id="institution-input" placeholder="Enter institution name" required>
                 <div class="modal-buttons">
-                    <button type="submit" class="save-btn">Save</button>
                     <button type="button" class="cancel-btn" id="cancel-institution">Cancel</button>
+                    <button type="submit" class="save-btn">Save</button>
                 </div>
             </form>
         </div>
@@ -239,15 +433,15 @@
             <form id="title-form">
                 <input type="text" id="title-input" placeholder="Enter table title" required>
                 <div class="modal-buttons">
-                    <button type="submit" class="save-btn">Save</button>
                     <button type="button" class="cancel-btn" id="cancel-title">Cancel</button>
+                    <button type="submit" class="save-btn">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Updated jspdf version -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script> <!-- Updated autotable version -->
     <script>
         const totalMarksForm = document.getElementById('total-marks-form');
         const gradingForm = document.getElementById('grading-form');
@@ -256,31 +450,54 @@
         const downloadPdfBtn = document.getElementById('download-pdf');
         const institutionName = document.getElementById('institution-name');
         const tableTitle = document.getElementById('table-title');
-        let totalMarks = null;
-        const students = [];
+        const institutionModal = document.getElementById('institution-modal');
+        const titleModal = document.getElementById('title-modal');
 
-        // Load saved institution name and title on page load
+        let totalMarks = null;
+        const students = []; // Consider using an object/Map if IDs are needed later
+
+        // --- Utility Functions ---
+        function showModal(modalElement) {
+            modalElement.style.display = 'flex';
+            setTimeout(() => modalElement.classList.add('show'), 10); // Add class for transition
+        }
+
+        function hideModal(modalElement) {
+            modalElement.classList.remove('show');
+            setTimeout(() => modalElement.style.display = 'none', 300); // Wait for transition
+        }
+
+        // --- Load Initial Data ---
         document.addEventListener('DOMContentLoaded', () => {
             const savedInstitutionName = localStorage.getItem('institutionName');
-            if (savedInstitutionName) {
-                institutionName.textContent = savedInstitutionName;
-            }
+            institutionName.textContent = savedInstitutionName || 'Institution Name'; // Default text
 
             const savedTableTitle = localStorage.getItem('tableTitle');
-            if (savedTableTitle) {
-                tableTitle.textContent = savedTableTitle;
-            }
+            tableTitle.textContent = savedTableTitle || 'Grading Table'; // Default text
+
+             // Re-load students if needed (optional, requires saving students to localStorage)
+             // const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
+             // if (savedStudents.length > 0) {
+             //    // Need to re-establish totalMarks if reloading students
+             //    const savedTotalMarks = localStorage.getItem('totalMarks');
+             //    if (savedTotalMarks) {
+             //       totalMarks = parseFloat(savedTotalMarks);
+             //       students.push(...savedStudents);
+             //       totalMarksForm.style.display = 'none';
+             //       gradingForm.style.display = 'flex'; // Use flex as per CSS
+             //       updateTable();
+             //    }
+             // }
         });
 
-        // Institution name edit functionality
+        // --- Edit Institution/Title Functionality ---
         document.getElementById('edit-institution').addEventListener('click', () => {
-            document.getElementById('institution-modal').style.display = 'flex';
             document.getElementById('institution-input').value = institutionName.textContent;
+            showModal(institutionModal);
+            document.getElementById('institution-input').focus();
         });
 
-        document.getElementById('cancel-institution').addEventListener('click', () => {
-            document.getElementById('institution-modal').style.display = 'none';
-        });
+        document.getElementById('cancel-institution').addEventListener('click', () => hideModal(institutionModal));
 
         document.getElementById('institution-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -288,19 +505,17 @@
             if (newName) {
                 institutionName.textContent = newName;
                 localStorage.setItem('institutionName', newName);
-                document.getElementById('institution-modal').style.display = 'none';
+                hideModal(institutionModal);
             }
         });
 
-        // Table title edit functionality
         document.getElementById('edit-title').addEventListener('click', () => {
-            document.getElementById('title-modal').style.display = 'flex';
             document.getElementById('title-input').value = tableTitle.textContent;
+            showModal(titleModal);
+            document.getElementById('title-input').focus();
         });
 
-        document.getElementById('cancel-title').addEventListener('click', () => {
-            document.getElementById('title-modal').style.display = 'none';
-        });
+        document.getElementById('cancel-title').addEventListener('click', () => hideModal(titleModal));
 
         document.getElementById('title-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -308,59 +523,86 @@
             if (newTitle) {
                 tableTitle.textContent = newTitle;
                 localStorage.setItem('tableTitle', newTitle);
-                document.getElementById('title-modal').style.display = 'none';
+                hideModal(titleModal);
             }
         });
 
-        // Set total marks and show grading form
+        // Close modal if clicking outside the content
+        [institutionModal, titleModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal(modal);
+                }
+            });
+        });
+
+        // --- Core Grading Logic ---
         document.getElementById('set-total-marks').addEventListener('click', () => {
-            const input = parseInt(document.getElementById('total-marks').value);
-            if (input > 0) {
-                totalMarks = input;
+            // ***MODIFIED: Use parseFloat***
+            const inputMarks = parseFloat(document.getElementById('total-marks').value);
+            if (!isNaN(inputMarks) && inputMarks > 0) {
+                totalMarks = inputMarks;
+                // localStorage.setItem('totalMarks', totalMarks); // Optional: save total marks
                 totalMarksForm.style.display = 'none';
-                gradingForm.style.display = 'block';
-                downloadPdfBtn.style.display = 'inline-block';
+                gradingForm.style.display = 'flex'; // Changed to flex
+                downloadPdfBtn.style.display = 'inline-block'; // Show download button
+                document.getElementById('student-name').focus();
+            } else {
+                 alert('Please enter a valid positive number for total marks.');
+                 document.getElementById('total-marks').focus();
             }
         });
 
-        // Add student to the table
         gradingForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            const studentName = document.getElementById('student-name').value.trim();
-            const studentMarks = parseInt(document.getElementById('student-marks').value);
+            errorMessage.textContent = ''; // Clear previous errors
+            const studentNameInput = document.getElementById('student-name');
+            const studentMarksInput = document.getElementById('student-marks');
 
-            if (!studentName || isNaN(studentMarks) || studentMarks < 0 || studentMarks > totalMarks) {
-                errorMessage.textContent = 'Please enter valid student name and marks.';
+            const studentName = studentNameInput.value.trim();
+             // ***MODIFIED: Use parseFloat***
+            const studentMarks = parseFloat(studentMarksInput.value);
+
+            if (!studentName) {
+                errorMessage.textContent = 'Please enter student name.';
+                studentNameInput.focus();
+                return;
+            }
+            if (isNaN(studentMarks) || studentMarks < 0 || studentMarks > totalMarks) {
+                errorMessage.textContent = `Please enter valid marks between 0 and ${totalMarks}.`;
+                studentMarksInput.focus();
                 return;
             }
 
             const student = {
+                id: Date.now(), // Simple unique ID
                 name: capitalizeName(studentName),
-                subjects: { 'Subject': studentMarks },
-                totalMarks: studentMarks,
-                grade: calculateGrade(studentMarks)
+                marks: studentMarks, // Simplified structure
+                gradeInfo: calculateGrade(studentMarks) // Store grade object { grade, color }
             };
 
             students.push(student);
+            // localStorage.setItem('students', JSON.stringify(students)); // Optional: save students
             updateTable();
-            document.getElementById('student-name').value = '';
-            document.getElementById('student-marks').value = '';
-            errorMessage.textContent = '';
+            studentNameInput.value = '';
+            studentMarksInput.value = '';
+            studentNameInput.focus(); // Focus back on name for next entry
         });
 
-        // Calculate grade based on marks
         function calculateGrade(marks) {
+            if (totalMarks === null || totalMarks <= 0) return { grade: 'N/A', color: '#7f8c8d' }; // Handle case where totalMarks isn't set
+
             const percentage = (marks / totalMarks) * 100;
-            if (percentage >= 80) return { grade: 'A+', color: '#27ae60' };
-            if (percentage >= 70) return { grade: 'A', color: '#2ecc71' };
-            if (percentage >= 60) return { grade: 'A-', color: '#16a085' };
-            if (percentage >= 50) return { grade: 'B', color: '#3498db' };
-            if (percentage >= 40) return { grade: 'C', color: '#f39c12' };
-            if (percentage >= 33) return { grade: 'D', color: '#e67e22' };
-            return { grade: 'F', color: '#c0392b' };
+            // Define grades with colors directly
+            if (percentage >= 80) return { grade: 'A+', color: '#27ae60' }; // Green
+            if (percentage >= 70) return { grade: 'A', color: '#2ecc71' }; // Lighter Green
+            if (percentage >= 60) return { grade: 'A-', color: '#1abc9c' }; // Turquoise
+            if (percentage >= 50) return { grade: 'B', color: '#3498db' }; // Blue
+            if (percentage >= 40) return { grade: 'C', color: '#f39c12' }; // Orange
+            if (percentage >= 33) return { grade: 'D', color: '#e67e22' }; // Darker Orange
+            return { grade: 'F', color: '#e74c3c' }; // Red
         }
 
-        // Capitalize student name
         function capitalizeName(name) {
             return name
                 .toLowerCase()
@@ -369,107 +611,194 @@
                 .join(' ');
         }
 
-        // Update the table with student data
         function updateTable() {
-            students.sort((a, b) => b.totalMarks - a.totalMarks);
-            gradingTable.innerHTML = '';
+            // Sort by marks descending
+            students.sort((a, b) => b.marks - a.marks);
+
+            gradingTable.innerHTML = ''; // Clear existing table rows
             students.forEach((student, index) => {
-                const row = document.createElement('tr');
+                const row = gradingTable.insertRow();
+                row.dataset.studentId = student.id; // Add ID for easier reference
+
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td contenteditable="true" class="editable">${student.name}</td>
-                    <td contenteditable="true" class="editable">${student.subjects['Subject']}</td>
-                    <td style="color: ${student.grade.color}"><b>${student.grade.grade}</b></td>
+                    <td contenteditable="true" class="editable name-cell">${student.name}</td>
+                    <td contenteditable="true" class="editable marks-cell">${student.marks}</td>
+                    <td data-grade-color="${student.gradeInfo.color}" style="--grade-color: ${student.gradeInfo.color};"><b>${student.gradeInfo.grade}</b></td>
                 `;
-                gradingTable.appendChild(row);
 
-                // Add event listeners for editable cells
-                const editableCells = row.querySelectorAll('.editable');
-                editableCells.forEach((cell, cellIndex) => {
-                    cell.addEventListener('blur', () => {
-                        if (cellIndex === 0) { // Name cell
-                            student.name = capitalizeName(cell.textContent.trim());
-                            cell.textContent = student.name; // Update display with capitalized name
-                        } else { // Marks cell
-                            const newMarks = Number(cell.textContent);
-                            if (!isNaN(newMarks) && newMarks >= 0 && newMarks <= totalMarks) {
-                                student.subjects['Subject'] = newMarks;
-                                student.totalMarks = newMarks;
-                                student.grade = calculateGrade(newMarks);
-                                updateTable(); // Refresh table to update sorting and grades
-                            } else {
-                                cell.textContent = student.subjects['Subject']; // Revert to original value
-                                alert(`Please enter valid marks between 0 and ${totalMarks}`);
-                            }
-                        }
-                    });
-                });
+                // Add blur event listeners for inline editing
+                const nameCell = row.querySelector('.name-cell');
+                const marksCell = row.querySelector('.marks-cell');
+
+                nameCell.addEventListener('blur', handleEdit);
+                marksCell.addEventListener('blur', handleEdit);
+                // Optional: Add keydown listener (Enter/Escape) for better UX
+                nameCell.addEventListener('keydown', handleEditKeydown);
+                marksCell.addEventListener('keydown', handleEditKeydown);
             });
 
-            updateDownloadButton();
+            updateDownloadButtonVisibility();
         }
 
-        // Update download button visibility
-        function updateDownloadButton() {
-            if (students.length > 0) {
-                downloadPdfBtn.style.display = 'block';
-            } else {
-                downloadPdfBtn.style.display = 'none';
+         function handleEdit(event) {
+             const cell = event.target;
+             const row = cell.closest('tr');
+             const studentId = Number(row.dataset.studentId);
+             const student = students.find(s => s.id === studentId);
+
+             if (!student) return;
+
+             const newValue = cell.textContent.trim();
+
+             if (cell.classList.contains('name-cell')) {
+                 const capitalized = capitalizeName(newValue);
+                 if (newValue && student.name !== capitalized) {
+                     student.name = capitalized;
+                     cell.textContent = capitalized; // Update cell display immediately
+                     // No table re-render needed if only name changes
+                     // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
+                 } else {
+                     cell.textContent = student.name; // Revert if invalid or unchanged
+                 }
+             } else if (cell.classList.contains('marks-cell')) {
+                  // ***MODIFIED: Use parseFloat and Number() which handles decimals***
+                 const newMarks = Number(newValue);
+                 if (!isNaN(newMarks) && newMarks >= 0 && newMarks <= totalMarks) {
+                     if (student.marks !== newMarks) {
+                         student.marks = newMarks;
+                         student.gradeInfo = calculateGrade(newMarks);
+                         // Re-render needed to update sort order and grade display
+                         updateTable();
+                         // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
+                     }
+                     // No need to revert textContent here as updateTable() handles it
+                 } else {
+                      // Revert if invalid - find the cell again after potential re-render
+                      alert(`Please enter valid marks between 0 and ${totalMarks}`);
+                      const potentiallyNewRow = gradingTable.querySelector(`tr[data-student-id="${studentId}"]`);
+                      if (potentiallyNewRow) {
+                         potentiallyNewRow.querySelector('.marks-cell').textContent = student.marks;
+                      }
+                 }
+             }
+         }
+
+        function handleEditKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent newline
+                event.target.blur(); // Trigger the blur event to save
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                // Revert changes manually and blur
+                const cell = event.target;
+                const row = cell.closest('tr');
+                const studentId = Number(row.dataset.studentId);
+                const student = students.find(s => s.id === studentId);
+                if (student) {
+                    if (cell.classList.contains('name-cell')) {
+                        cell.textContent = student.name;
+                    } else if (cell.classList.contains('marks-cell')) {
+                        cell.textContent = student.marks;
+                    }
+                }
+                cell.blur();
             }
         }
 
-        // Download table as PDF
+
+        function updateDownloadButtonVisibility() {
+            downloadPdfBtn.style.display = students.length > 0 ? 'inline-block' : 'none';
+        }
+
+        // --- PDF Download ---
         function downloadTableAsPDF() {
+            if (students.length === 0) return;
+
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Institution name
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(0, 84, 147);
-            doc.text(institutionName.textContent, 105, 20, { align: 'center' });
+            // --- Document Styling ---
+            const docTitle = tableTitle.textContent;
+            const docInstitution = institutionName.textContent;
+            const primaryColor = '#4a90e2'; // Match CSS
+            const headerColor = '#f8f9fa'; // Match CSS
+            const textColor = '#4a4a4a';   // Match CSS
 
-            // Table title
+            // Institution Name
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(primaryColor);
+            doc.text(docInstitution, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+            // Table Title
             doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(0, 84, 147);
-            doc.text(tableTitle.textContent, 105, 35, { align: 'center' });
+            doc.setFont('helvetica', 'normal'); // Normal weight for title
+            doc.setTextColor(textColor);
+            doc.text(docTitle, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
 
-            // Reset styles
-            doc.setTextColor(0, 0, 0);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(12);
+             // Add Total Marks Info
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(textColor);
+            doc.text(`Total Marks: ${totalMarks}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
 
-            // Prepare table data
-            const tableBody = students.map((student, index) => [
+
+            // --- Table Data ---
+            const tableColumn = ["Serial", "Name", "Marks", "Grade"];
+            const tableRows = students.map((student, index) => [
                 index + 1,
                 student.name,
-                student.subjects['Subject'],
-                student.grade.grade
+                student.marks, // Already handles decimals
+                student.gradeInfo.grade
             ]);
 
-            // Generate table
+            // --- AutoTable Generation ---
             doc.autoTable({
-                head: [['Serial', 'Name', 'Marks', 'Grade']],
-                body: tableBody,
-                startY: 45,
+                head: [tableColumn],
+                body: tableRows,
+                startY: 45, // Start table below title
+                theme: 'grid', // 'striped', 'grid', 'plain'
+                headStyles: {
+                    fillColor: headerColor, // Header background
+                    textColor: textColor,   // Header text
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
                 styles: {
                     font: 'helvetica',
-                    fontSize: 12
+                    fontSize: 10,
+                    cellPadding: 3,
+                    textColor: textColor,
                 },
-                headStyles: {
-                    fillColor: [223, 230, 233],
-                    textColor: [0, 0, 0],
-                    fontStyle: 'bold'
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 15 }, // Serial
+                    1: { halign: 'left' },                  // Name
+                    2: { halign: 'center', cellWidth: 25 }, // Marks
+                    3: { halign: 'center', cellWidth: 20 }  // Grade
+                },
+                didParseCell: function (data) {
+                    // Center align specific columns if theme doesn't do it
+                     if (data.column.index === 0 || data.column.index === 2 || data.column.index === 3) {
+                         data.cell.styles.halign = 'center';
+                     }
+                     // Bold Grade text in PDF
+                     if (data.column.index === 3 && data.row.section === 'body') {
+                        data.cell.styles.fontStyle = 'bold';
+                        // Optional: Add color based on grade (more complex)
+                        // const student = students[data.row.index];
+                        // data.cell.styles.textColor = student.gradeInfo.color; // Can look messy
+                     }
                 }
             });
 
-            // Save the PDF
-            doc.save('TestResult.pdf');
+            // --- Save PDF ---
+            const pdfFileName = `${docTitle.replace(/\s+/g, '_') || 'Grading_Table'}.pdf`;
+            doc.save(pdfFileName);
         }
 
-        // Add event listener for download button
         downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
+
     </script>
 </body>
 </html>
