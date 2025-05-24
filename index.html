@@ -42,11 +42,11 @@
         h2 {
             font-weight: 500;
             color: var(--dark-color);
-            margin: 5px 0; /* Reduced margin for h2 */
+            margin: 5px 0; 
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px; /* Increased width for more columns */
             margin: 30px auto;
             background: var(--light-color);
             border: 1px solid var(--border-color);
@@ -63,13 +63,13 @@
         }
 
         .institution-wrapper, .title-wrapper {
-            display: flex; /* Use flex for better alignment */
+            display: flex; 
             align-items: center;
             justify-content: center;
             gap: 10px;
             position: relative;
-            margin-bottom: 10px; /* Space between title/institution if they wrap */
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            margin-bottom: 10px; 
+            flex-wrap: wrap; 
         }
 
         .edit-btn {
@@ -81,7 +81,7 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
-            display: inline-flex; /* Use inline-flex */
+            display: inline-flex; 
             align-items: center;
             gap: 5px;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -95,7 +95,7 @@
         form {
             margin-bottom: 25px;
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping */
+            flex-wrap: wrap; 
             gap: 10px;
             align-items: center;
         }
@@ -106,12 +106,25 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
+        
+        #grading-form select { /* Style for the new select dropdown */
+            flex-grow: 1;
+            min-width: 150px;
+            padding: 12px 15px;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+        }
+
 
         input[type="text"],
         input[type="number"],
-        textarea { /* Added textarea styling */
-            flex-grow: 1; /* Allow inputs to grow */
-            min-width: 150px; /* Minimum width */
+        textarea { 
+            flex-grow: 1; 
+            min-width: 150px; 
             padding: 12px 15px;
             font-size: 15px;
             border: 1px solid var(--border-color);
@@ -123,15 +136,16 @@
 
         input[type="text"]:focus,
         input[type="number"]:focus,
-        textarea:focus { /* Added textarea styling */
+        textarea:focus,
+        #grading-form select:focus { 
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
             outline: none;
         }
         
-        textarea { /* Specific textarea adjustments */
-            min-height: 60px; /* Default height */
-            resize: vertical; /* Allow vertical resizing */
+        textarea { 
+            min-height: 60px; 
+            resize: vertical; 
         }
 
 
@@ -149,7 +163,7 @@
         }
 
         button:hover {
-            background-color: #3a7bc8; /* Darker blue */
+            background-color: #3a7bc8; 
             box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
         }
         button:active {
@@ -157,14 +171,13 @@
              box-shadow: 0 2px 5px rgba(74, 144, 226, 0.2);
          }
 
-        /* Specific Button Styles */
         #download-pdf {
              background-color: var(--accent-color);
              color: var(--dark-color);
-             margin-top: 15px; /* Add some space above */
+             margin-top: 15px; 
         }
         #download-pdf:hover {
-             background-color: #40c3a2; /* Darker teal */
+             background-color: #40c3a2; 
              box-shadow: 0 4px 10px rgba(80, 227, 194, 0.3);
         }
          #download-pdf:active {
@@ -176,8 +189,8 @@
             color: var(--danger-color);
             font-size: 14px;
             margin-top: 5px;
-            width: 100%; /* Take full width in form */
-            min-height: 20px; /* Reserve space */
+            width: 100%; 
+            min-height: 20px; 
             font-weight: 500;
             padding-left: 5px;
         }
@@ -188,250 +201,135 @@
             margin-top: 30px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
             border-radius: 8px;
-            overflow: hidden; /* Important for rounded corners on table */
+            overflow: hidden; 
         }
 
         th, td {
-            padding: 14px 18px;
+            padding: 10px 12px; /* Adjusted padding for more columns */
             border: none;
             border-bottom: 1px solid var(--border-color);
-            text-align: left; /* Default left align */
+            text-align: left; 
             vertical-align: middle;
+            font-size: 14px; /* Slightly smaller font for more columns */
         }
+         td.subject-marks-cell {
+            text-align: center;
+        }
+        td.subject-marks-cell b { /* For the grade part like (A+) */
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            min-width: 30px;
+            text-align: center;
+        }
+
 
         th {
             background-color: var(--header-bg);
             color: var(--dark-color);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 12px; /* Adjusted for more headers */
             letter-spacing: 0.5px;
-            border-bottom-width: 2px; /* Thicker border below header */
+            border-bottom-width: 2px; 
         }
-
-        /* Center specific columns */
-        th:first-child, td:first-child, /* Serial */
-        th:nth-child(3), td:nth-child(3), /* Marks */
-        th:nth-child(4), td:nth-child(4) { /* Grade - adjusted for new Comments column */
-            text-align: center;
-        }
-        /* Last column (now Comments) might not always be centered, depends on content */
-
-
-        /* Remove border from last row */
+        
         tr:last-child td {
             border-bottom: none;
         }
-
-        /* Zebra striping */
         tr:nth-child(even) {
             background-color: var(--secondary-color);
         }
-
-        /* Row hover effect */
         tr:hover {
             background-color: var(--hover-bg);
         }
 
         td.editable {
             cursor: pointer;
-            background-color: transparent; /* Use transparent bg */
+            background-color: transparent; 
             transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            border-radius: 4px; /* Slight rounding for focus */
-            position: relative; /* For potential pseudo-elements if needed */
+            border-radius: 4px; 
+            position: relative; 
         }
-
         td.editable:hover {
-            background-color: rgba(74, 144, 226, 0.1); /* Subtle blueish hover */
+            background-color: rgba(74, 144, 226, 0.1); 
         }
-
         td.editable:focus {
             background-color: white;
-            outline: none; /* Remove default outline */
-            box-shadow: inset 0 0 0 2px var(--primary-color); /* Inset shadow as outline */
-            z-index: 1; /* Ensure focus style is on top */
+            outline: none; 
+            box-shadow: inset 0 0 0 2px var(--primary-color); 
+            z-index: 1; 
         }
-
-        /* Style Grade Cell */
-        td b { /* Targeting the bold grade text */
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 15px; /* Pill shape */
-            font-size: 13px;
-            font-weight: 600;
-            color: white; /* Text color for grades */
-            min-width: 40px; /* Ensure minimum width */
-            text-align: center;
-        }
-
-        /* Grade-specific background colors */
-        td[data-grade-color] b {
-             background-color: var(--grade-color, var(--dark-color)); /* Use dynamic color */
-        }
-
-        .grade-scale-manager {
+        
+        .subject-manager, .grade-scale-manager {
             margin-bottom: 25px;
             padding: 15px;
             background-color: var(--secondary-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-        .grade-scale-manager h2 {
+        .subject-manager h2, .grade-scale-manager h2 {
             margin-top: 0;
             margin-bottom: 15px;
         }
-        #grade-scale-definitions {
+        #defined-subjects-list, #grade-scale-definitions {
             margin-top: 15px;
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
         }
-
-        .grade-rule-list {
+        #defined-subjects-list ul, .grade-rule-list { 
             list-style-type: none;
             padding-left: 0;
         }
-
-        .grade-rule-item {
+        .subject-item, .grade-rule-item {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* For better vertical alignment */
-            padding: 8px 0; /* Increased padding slightly */
-            border-bottom: 1px solid var(--border-color); /* Add a separator */
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-        .grade-rule-item:last-child {
-            border-bottom: none; /* Remove border for the last item */
+        .subject-item:last-child, .grade-rule-item:last-child {
+            border-bottom: none;
         }
-
-        .button-remove-rule {
+        .button-remove-subject, .button-remove-rule { 
             background-color: var(--danger-color);
             color: white;
-            padding: 4px 10px; /* Adjusted padding */
-            font-size: 13px;  /* Adjusted font size */
+            padding: 4px 10px;
+            font-size: 13px;
             border: none;
-            border-radius: 5px; /* Consistent border-radius */
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        .button-remove-rule:hover {
-            background-color: #a00115; /* Darker red on hover */
+        .button-remove-subject:hover, .button-remove-rule:hover {
+            background-color: #a00115; 
         }
 
         td.comments-cell {
             overflow-wrap: break-word;
             white-space: pre-wrap;
-            vertical-align: middle; /* Or top if content is lengthy */
-            min-width: 150px; /* Ensure a minimum width for comments */
-            max-width: 300px; /* Prevent extremely wide cells */
+            vertical-align: middle; 
+            min-width: 150px; 
+            max-width: 300px; 
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.65); /* Darker overlay */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal.show { /* Class to show modal with transition */
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 25px 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-
-        .modal.show .modal-content {
-            transform: scale(1);
-        }
-
-
-        .modal-content h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-        }
-
-        .modal-content input[type="text"] {
-            width: 100%; /* Full width inside modal */
-            margin-bottom: 15px;
-        }
-
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        .save-btn, .cancel-btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .save-btn {
-            background: var(--primary-color);
-            color: white;
-        }
-        .save-btn:hover {
-             background-color: #3a7bc8;
-             box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
-        }
-
-        .cancel-btn {
-            background: var(--secondary-color);
-            color: var(--dark-color);
-            border: 1px solid var(--border-color);
-        }
-        .cancel-btn:hover {
-             background-color: var(--hover-bg);
-        }
-
-        .save-feedback {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--success-color);
-            color: var(--dark-color); /* Or white if contrast is better */
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-top: 10px;
-            animation: fadeInOut 2s ease-in-out;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 5; /* Ensure it's above buttons */
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translate(-50%, -10px); }
-            15% { opacity: 1; transform: translate(-50%, 0); }
-            85% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -10px); }
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { background: white; padding: 25px 30px; border-radius: 8px; width: 90%; max-width: 450px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal.show .modal-content { transform: scale(1); }
+        .modal-content h3 { margin-top: 0; margin-bottom: 20px; color: var(--primary-color); font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .modal-content input[type="text"] { width: 100%; margin-bottom: 15px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px; }
+        .save-btn, .cancel-btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px; }
+        .save-btn { background: var(--primary-color); color: white; }
+        .save-btn:hover { background-color: #3a7bc8; box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2); }
+        .cancel-btn { background: var(--secondary-color); color: var(--dark-color); border: 1px solid var(--border-color); }
+        .cancel-btn:hover { background-color: var(--hover-bg); }
+        .save-feedback { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: var(--dark-color); padding: 8px 16px; border-radius: 4px; font-size: 14px; margin-top: 10px; animation: fadeInOut 2s ease-in-out; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 5; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translate(-50%, -10px); } 15% { opacity: 1; transform: translate(-50%, 0); } 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -10px); } }
     </style>
 </head>
 <body>
@@ -449,11 +347,22 @@
         </div>
 
         <form id="total-marks-form">
-            <input type="number" id="total-marks" placeholder="Enter total marks (e.g., 100)" required step="any">
-            <button type="button" id="set-total-marks">Set Total Marks</button>
+            <input type="number" id="total-marks" placeholder="Max marks per subject (e.g., 100)" required step="any">
+            <button type="button" id="set-total-marks">Set Max Marks</button>
         </form>
 
-        <div class="grade-scale-manager">
+        <div class="subject-manager" style="display: none;">
+            <h2>Define Subjects</h2>
+            <form id="subject-form">
+                <input type="text" id="subject-name-input" placeholder="Enter subject name" required>
+                <button type="button" id="add-subject-btn">Add Subject</button>
+            </form>
+            <div id="defined-subjects-list">
+                <!-- Defined subjects will be listed here -->
+            </div>
+        </div>
+
+        <div class="grade-scale-manager" style="display: none;">
             <h2>Customize Grade Scale</h2>
             <form id="grade-scale-form">
                 <input type="text" id="grade-name-input" placeholder="e.g., Excellent, A+, Pass" required>
@@ -467,9 +376,10 @@
 
         <form id="grading-form" style="display: none;">
             <input type="text" id="student-name" placeholder="Student name" required>
-            <input type="number" id="student-marks" placeholder="Marks obtained (e.g., 85.5)" required step="any">
+            <select id="current-subject-select" style="display: none;"></select> 
+            <input type="number" id="student-marks" placeholder="Marks for selected subject" required step="any">
             <textarea id="student-comments" placeholder="Enter comments..."></textarea>
-            <button type="submit">Add Student</button>
+            <button type="submit">Add/Update Student Marks</button>
             <div class="error" id="error-message"></div>
         </form>
 
@@ -477,13 +387,7 @@
 
         <table>
             <thead>
-                <tr>
-                    <th>Serial</th>
-                    <th>Name</th>
-                    <th>Marks</th>
-                    <th>Grade</th>
-                    <th>Comments</th>
-                </tr>
+                <!-- Headers will be dynamically generated here -->
             </thead>
             <tbody id="grading-table">
                 <!-- Table rows will be added dynamically -->
@@ -492,225 +396,158 @@
     </div>
 
     <!-- Modals for editing institution and title -->
-    <div id="institution-modal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Institution Name</h3>
-            <form id="institution-form">
-                <input type="text" id="institution-input" placeholder="Enter institution name" required>
-                <div class="modal-buttons">
-                    <button type="button" class="cancel-btn" id="cancel-institution">Cancel</button>
-                    <button type="submit" class="save-btn">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <div id="institution-modal" class="modal"> <div class="modal-content"> <h3>Edit Institution Name</h3> <form id="institution-form"> <input type="text" id="institution-input" placeholder="Enter institution name" required> <div class="modal-buttons"> <button type="button" class="cancel-btn" id="cancel-institution">Cancel</button> <button type="submit" class="save-btn">Save</button> </div> </form> </div> </div>
+    <div id="title-modal" class="modal"> <div class="modal-content"> <h3>Edit Table Title</h3> <form id="title-form"> <input type="text" id="title-input" placeholder="Enter table title" required> <div class="modal-buttons"> <button type="button" class="cancel-btn" id="cancel-title">Cancel</button> <button type="submit" class="save-btn">Save</button> </div> </form> </div> </div>
 
-    <div id="title-modal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Table Title</h3>
-            <form id="title-form">
-                <input type="text" id="title-input" placeholder="Enter table title" required>
-                <div class="modal-buttons">
-                    <button type="button" class="cancel-btn" id="cancel-title">Cancel</button>
-                    <button type="submit" class="save-btn">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Updated jspdf version -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script> <!-- Updated autotable version -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script> 
     <script>
         const totalMarksForm = document.getElementById('total-marks-form');
         const gradingForm = document.getElementById('grading-form');
-        const gradingTable = document.getElementById('grading-table');
+        const gradingTableBody = document.getElementById('grading-table'); // Renamed for clarity
+        const gradingTableHead = gradingTableBody.previousElementSibling; // Get the thead element
         const errorMessage = document.getElementById('error-message');
         const downloadPdfBtn = document.getElementById('download-pdf');
         const institutionName = document.getElementById('institution-name');
         const tableTitle = document.getElementById('table-title');
         const institutionModal = document.getElementById('institution-modal');
         const titleModal = document.getElementById('title-modal');
-        // New elements for grade scale
+        
+        const gradeScaleManager = document.querySelector('.grade-scale-manager');
         const gradeScaleForm = document.getElementById('grade-scale-form');
         const gradeScaleDefinitions = document.getElementById('grade-scale-definitions');
-        const studentComments = document.getElementById('student-comments');
+        const studentCommentsInput = document.getElementById('student-comments'); // Renamed from studentComments
 
+        const subjectManagerDiv = document.querySelector('.subject-manager');
+        const subjectForm = document.getElementById('subject-form');
+        const subjectNameInput = document.getElementById('subject-name-input');
+        const addSubjectBtn = document.getElementById('add-subject-btn');
+        const definedSubjectsListDiv = document.getElementById('defined-subjects-list');
+        const currentSubjectSelect = document.getElementById('current-subject-select');
 
-        let totalMarks = null;
-        const students = []; // Consider using an object/Map if IDs are needed later
-        let gradeRules = []; // To store custom grade rules: { name: 'A', percentage: 80 }
+        let totalMarksPerSubject = null;
+        let definedSubjects = [];
+        const students = []; 
+        let gradeRules = []; 
 
+        function showModal(modalElement) { modalElement.style.display = 'flex'; setTimeout(() => modalElement.classList.add('show'), 10); }
+        function hideModal(modalElement) { modalElement.classList.remove('show'); setTimeout(() => modalElement.style.display = 'none', 300); }
 
-        // --- Utility Functions ---
-        function showModal(modalElement) {
-            modalElement.style.display = 'flex';
-            setTimeout(() => modalElement.classList.add('show'), 10); // Add class for transition
+        function updateGradingFormVisibility() {
+            if (totalMarksPerSubject && definedSubjects.length > 0) {
+                gradingForm.style.display = 'flex';
+                currentSubjectSelect.style.display = 'block'; // Show dropdown
+                if (students.length === 0 && document.getElementById('student-name')) { 
+                     document.getElementById('student-name').focus();
+                }
+            } else {
+                gradingForm.style.display = 'none';
+                currentSubjectSelect.style.display = 'none'; // Hide dropdown
+            }
         }
 
-        function hideModal(modalElement) {
-            modalElement.classList.remove('show');
-            setTimeout(() => modalElement.style.display = 'none', 300); // Wait for transition
-        }
-
-        // --- Load Initial Data ---
         document.addEventListener('DOMContentLoaded', () => {
             const savedInstitutionName = localStorage.getItem('institutionName');
-            institutionName.textContent = savedInstitutionName || 'Institution Name'; // Default text
-
+            institutionName.textContent = savedInstitutionName || 'Institution Name'; 
             const savedTableTitle = localStorage.getItem('tableTitle');
-            tableTitle.textContent = savedTableTitle || 'Grading Table'; // Default text
-
-            // Load saved grade rules
+            tableTitle.textContent = savedTableTitle || 'Grading Table'; 
             const savedGradeRules = JSON.parse(localStorage.getItem('gradeRules') || '[]');
             gradeRules = savedGradeRules;
             renderGradeRules();
-
-
-             // Re-load students if needed (optional, requires saving students to localStorage)
-             // const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
-             // if (savedStudents.length > 0) {
-             //    // Need to re-establish totalMarks if reloading students
-             //    const savedTotalMarks = localStorage.getItem('totalMarks');
-             //    if (savedTotalMarks) {
-             //       totalMarks = parseFloat(savedTotalMarks);
-             //       students.push(...savedStudents);
-             //       totalMarksForm.style.display = 'none';
-             //       gradingForm.style.display = 'flex'; // Use flex as per CSS
-             //       updateTable();
-             //    }
-             // }
+            loadSubjectsFromLocalStorage();
+            renderDefinedSubjects(); // This will also call updateCurrentSubjectSelect
+            updateGradingFormVisibility(); 
         });
 
-        // --- Edit Institution/Title Functionality ---
-        document.getElementById('edit-institution').addEventListener('click', () => {
-            document.getElementById('institution-input').value = institutionName.textContent;
-            showModal(institutionModal);
-            document.getElementById('institution-input').focus();
-        });
-
+        document.getElementById('edit-institution').addEventListener('click', () => { /* ... modal logic ... */ document.getElementById('institution-input').value = institutionName.textContent; showModal(institutionModal); document.getElementById('institution-input').focus(); });
         document.getElementById('cancel-institution').addEventListener('click', () => hideModal(institutionModal));
-
-        document.getElementById('institution-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newName = document.getElementById('institution-input').value.trim();
-            if (newName) {
-                institutionName.textContent = newName;
-                localStorage.setItem('institutionName', newName);
-                hideModal(institutionModal);
-            }
-        });
-
-        document.getElementById('edit-title').addEventListener('click', () => {
-            document.getElementById('title-input').value = tableTitle.textContent;
-            showModal(titleModal);
-            document.getElementById('title-input').focus();
-        });
-
+        document.getElementById('institution-form').addEventListener('submit', (e) => { e.preventDefault(); const newName = document.getElementById('institution-input').value.trim(); if (newName) { institutionName.textContent = newName; localStorage.setItem('institutionName', newName); hideModal(institutionModal); } });
+        document.getElementById('edit-title').addEventListener('click', () => { /* ... modal logic ... */ document.getElementById('title-input').value = tableTitle.textContent; showModal(titleModal); document.getElementById('title-input').focus(); });
         document.getElementById('cancel-title').addEventListener('click', () => hideModal(titleModal));
+        document.getElementById('title-form').addEventListener('submit', (e) => { e.preventDefault(); const newTitle = document.getElementById('title-input').value.trim(); if (newTitle) { tableTitle.textContent = newTitle; localStorage.setItem('tableTitle', newTitle); hideModal(titleModal); } });
+        [institutionModal, titleModal].forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) { hideModal(modal); } }); });
 
-        document.getElementById('title-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newTitle = document.getElementById('title-input').value.trim();
-            if (newTitle) {
-                tableTitle.textContent = newTitle;
-                localStorage.setItem('tableTitle', newTitle);
-                hideModal(titleModal);
-            }
-        });
+        function saveSubjectsToLocalStorage() { localStorage.setItem('definedSubjects', JSON.stringify(definedSubjects)); }
+        function loadSubjectsFromLocalStorage() { const savedSubjects = JSON.parse(localStorage.getItem('definedSubjects') || '[]'); definedSubjects = savedSubjects; }
 
-        // Close modal if clicking outside the content
-        [institutionModal, titleModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    hideModal(modal);
-                }
-            });
-        });
-
-        // --- Grade Scale Management ---
-        if (gradeScaleForm) { // Ensure element exists
-            gradeScaleForm.addEventListener('click', (event) => { // Use click on form for button
-                if (event.target.id === 'add-grade-rule') {
-                    const gradeNameInput = document.getElementById('grade-name-input');
-                    const gradePercentageInput = document.getElementById('grade-percentage-input');
-                    const name = gradeNameInput.value.trim();
-                    const percentage = parseFloat(gradePercentageInput.value);
-
-                    if (name && !isNaN(percentage) && percentage >= 0 && percentage <= 100) {
-                        // Check for duplicate percentages or names (optional)
-                        if (gradeRules.some(rule => rule.name.toLowerCase() === name.toLowerCase() || rule.percentage === percentage)) {
-                            alert('Grade name or percentage already exists.');
-                            return;
-                        }
-                        gradeRules.push({ name, percentage });
-                        gradeRules.sort((a, b) => b.percentage - a.percentage); // Keep sorted
-                        localStorage.setItem('gradeRules', JSON.stringify(gradeRules));
-                        renderGradeRules();
-                        gradeNameInput.value = '';
-                        gradePercentageInput.value = '';
-                        updateTable(); // Re-calculate grades if rules change
-                    } else {
-                        alert('Please enter a valid grade name and percentage (0-100).');
-                    }
-                }
-            });
-        }
-
-        function renderGradeRules() {
-            if (!gradeScaleDefinitions) return;
-            gradeScaleDefinitions.innerHTML = ''; // Clear existing
-            if (gradeRules.length === 0) {
-                gradeScaleDefinitions.innerHTML = '<p>No custom grade rules defined. Default scale will be used.</p>';
+        function updateCurrentSubjectSelect() {
+            if (!currentSubjectSelect) return;
+            currentSubjectSelect.innerHTML = ''; // Clear existing
+            if (definedSubjects.length === 0) {
+                currentSubjectSelect.style.display = 'none';
                 return;
             }
-            const ul = document.createElement('ul');
-            ul.className = 'grade-rule-list'; // Use CSS class
-
-            gradeRules.forEach(rule => {
-                const li = document.createElement('li');
-                li.className = 'grade-rule-item'; // Use CSS class
-                
-                const span = document.createElement('span');
-                span.textContent = `${rule.name}: ${rule.percentage}% and above`;
-
-                const button = document.createElement('button');
-                button.type = 'button';
-                // Keep 'remove-grade-rule' for JS targeting, add new class for styling
-                button.className = 'remove-grade-rule button-remove-rule'; 
-                button.dataset.percentage = rule.percentage;
-                button.textContent = 'Remove';
-                
-                li.appendChild(span);
-                li.appendChild(button);
-                ul.appendChild(li);
+            definedSubjects.forEach(subjectName => {
+                const option = document.createElement('option');
+                option.value = subjectName;
+                option.textContent = subjectName;
+                currentSubjectSelect.appendChild(option);
             });
-            gradeScaleDefinitions.appendChild(ul);
-
-            // Add event listeners for remove buttons
-            gradeScaleDefinitions.querySelectorAll('.remove-grade-rule').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const percentageToRemove = parseFloat(event.target.dataset.percentage);
-                    gradeRules = gradeRules.filter(rule => rule.percentage !== percentageToRemove);
-                    localStorage.setItem('gradeRules', JSON.stringify(gradeRules));
-                    renderGradeRules();
-                    updateTable(); // Re-calculate grades
+            currentSubjectSelect.style.display = 'block'; // Ensure it's visible if subjects exist
+        }
+        
+        function renderDefinedSubjects() {
+            if (!definedSubjectsListDiv) return;
+            definedSubjectsListDiv.innerHTML = ''; 
+            if (definedSubjects.length === 0) {
+                definedSubjectsListDiv.innerHTML = '<p>No subjects defined yet.</p>';
+            } else {
+                const ul = document.createElement('ul');
+                definedSubjects.forEach(subjectName => {
+                    const li = document.createElement('li');
+                    li.className = 'subject-item';
+                    const span = document.createElement('span');
+                    span.textContent = subjectName;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'button-remove-subject';
+                    button.dataset.subject = subjectName;
+                    button.textContent = 'Remove';
+                    button.addEventListener('click', () => {
+                        definedSubjects = definedSubjects.filter(s => s !== subjectName);
+                        saveSubjectsToLocalStorage();
+                        renderDefinedSubjects(); 
+                        updateTable(); 
+                    });
+                    li.appendChild(span);
+                    li.appendChild(button);
+                    ul.appendChild(li);
                 });
-            });
+                definedSubjectsListDiv.appendChild(ul);
+            }
+            updateCurrentSubjectSelect(); // Update dropdown after rendering subjects
+            updateGradingFormVisibility(); 
         }
 
+        function addSubject() {
+            const name = subjectNameInput.value.trim();
+            if (!name) { alert("Subject name cannot be empty."); return; }
+            if (definedSubjects.map(s => s.toLowerCase()).includes(name.toLowerCase())) { alert("Subject already defined."); return; }
+            definedSubjects.push(name); 
+            saveSubjectsToLocalStorage();
+            renderDefinedSubjects();
+            subjectNameInput.value = '';
+            updateTable(); 
+        }
 
-        // --- Core Grading Logic ---
+        if (addSubjectBtn) addSubjectBtn.addEventListener('click', addSubject);
+        if (subjectNameInput) subjectNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addSubject(); } });
+
+        if (gradeScaleForm) { gradeScaleForm.addEventListener('click', (event) => { /* ... grade rule logic ... */ if (event.target.id === 'add-grade-rule') { const gradeNameInput = document.getElementById('grade-name-input'); const gradePercentageInput = document.getElementById('grade-percentage-input'); const name = gradeNameInput.value.trim(); const percentage = parseFloat(gradePercentageInput.value); if (name && !isNaN(percentage) && percentage >= 0 && percentage <= 100) { if (gradeRules.some(rule => rule.name.toLowerCase() === name.toLowerCase() || rule.percentage === percentage)) { alert('Grade name or percentage already exists.'); return; } gradeRules.push({ name, percentage }); gradeRules.sort((a, b) => b.percentage - a.percentage); localStorage.setItem('gradeRules', JSON.stringify(gradeRules)); renderGradeRules(); gradeNameInput.value = ''; gradePercentageInput.value = ''; updateTable(); } else { alert('Please enter a valid grade name and percentage (0-100).'); } } }); }
+        function renderGradeRules() { /* ... existing grade rule rendering logic ... */ if (!gradeScaleDefinitions) return; gradeScaleDefinitions.innerHTML = ''; if (gradeRules.length === 0) { gradeScaleDefinitions.innerHTML = '<p>No custom grade rules defined. Default scale will be used.</p>'; return; } const ul = document.createElement('ul'); ul.className = 'grade-rule-list'; gradeRules.forEach(rule => { const li = document.createElement('li'); li.className = 'grade-rule-item'; const span = document.createElement('span'); span.textContent = `${rule.name}: ${rule.percentage}% and above`; const button = document.createElement('button'); button.type = 'button'; button.className = 'remove-grade-rule button-remove-rule'; button.dataset.percentage = rule.percentage; button.textContent = 'Remove'; li.appendChild(span); li.appendChild(button); ul.appendChild(li); }); gradeScaleDefinitions.appendChild(ul); gradeScaleDefinitions.querySelectorAll('.remove-grade-rule').forEach(button => { button.addEventListener('click', (event) => { const percentageToRemove = parseFloat(event.target.dataset.percentage); gradeRules = gradeRules.filter(rule => rule.percentage !== percentageToRemove); localStorage.setItem('gradeRules', JSON.stringify(gradeRules)); renderGradeRules(); updateTable(); }); }); }
+
         document.getElementById('set-total-marks').addEventListener('click', () => {
             const inputMarks = parseFloat(document.getElementById('total-marks').value);
             if (!isNaN(inputMarks) && inputMarks > 0) {
-                totalMarks = inputMarks;
+                totalMarksPerSubject = inputMarks;
                 totalMarksForm.style.display = 'none';
-                gradingForm.style.display = 'flex'; 
-                if(gradeScaleManager) gradeScaleManager.style.display = 'block'; // Show grade scale manager
-                downloadPdfBtn.style.display = 'inline-block'; 
-                document.getElementById('student-name').focus();
+                if (subjectManagerDiv) subjectManagerDiv.style.display = 'block'; 
+                if (gradeScaleManager) gradeScaleManager.style.display = 'block'; 
+                updateGradingFormVisibility(); 
+                if (definedSubjects.length === 0) { if(subjectNameInput) subjectNameInput.focus(); } 
+                else { if(document.getElementById('student-name')) document.getElementById('student-name').focus(); }
             } else {
-                 alert('Please enter a valid positive number for total marks.');
+                 alert('Please enter a valid positive number for max marks per subject.');
                  document.getElementById('total-marks').focus();
             }
         });
@@ -720,59 +557,49 @@
             errorMessage.textContent = ''; 
             const studentNameInput = document.getElementById('student-name');
             const studentMarksInput = document.getElementById('student-marks');
-            const studentCommentsInput = document.getElementById('student-comments');
+            const selectedSubject = currentSubjectSelect.value;
 
-
+            if (!selectedSubject && definedSubjects.length > 0) { // Check if a subject is selected if subjects are defined
+                errorMessage.textContent = 'Please select a subject.';
+                currentSubjectSelect.focus();
+                return;
+            }
+            
             const studentName = studentNameInput.value.trim();
-            const studentMarks = parseFloat(studentMarksInput.value);
+            const marksValue = parseFloat(studentMarksInput.value);
             const comments = studentCommentsInput.value.trim();
 
-
-            if (!studentName) {
-                errorMessage.textContent = 'Please enter student name.';
-                studentNameInput.focus();
-                return;
-            }
-            if (isNaN(studentMarks) || studentMarks < 0 || studentMarks > totalMarks) {
-                errorMessage.textContent = `Please enter valid marks between 0 and ${totalMarks}.`;
-                studentMarksInput.focus();
-                return;
+            if (!studentName) { errorMessage.textContent = 'Please enter student name.'; studentNameInput.focus(); return; }
+            if (isNaN(marksValue) || marksValue < 0 || marksValue > totalMarksPerSubject) {
+                errorMessage.textContent = `Please enter valid marks (0-${totalMarksPerSubject}) for ${selectedSubject}.`;
+                studentMarksInput.focus(); return;
             }
 
-            const student = {
-                id: Date.now(), 
-                name: capitalizeName(studentName),
-                marks: studentMarks, 
-                gradeInfo: calculateGrade(studentMarks),
-                comments: comments // Store comments
-            };
+            let student = students.find(s => s.name.toLowerCase() === studentName.toLowerCase());
+            if (!student) {
+                student = { id: Date.now(), name: capitalizeName(studentName), subjectMarks: {}, comments: comments };
+                students.push(student);
+            }
+            
+            student.subjectMarks[selectedSubject] = marksValue;
+            if(comments) student.comments = comments; // Update comments if provided
 
-            students.push(student);
             updateTable();
-            studentNameInput.value = '';
-            studentMarksInput.value = '';
-            studentCommentsInput.value = ''; // Clear comments field
-            studentNameInput.focus(); 
+            // Don't clear studentNameInput, clear marks and comments for next subject for same student or new student
+            studentMarksInput.value = ''; 
+            studentCommentsInput.value = ''; 
+            studentMarksInput.focus(); // Focus on marks for next entry
         });
 
-        function calculateGrade(marks) {
-            if (totalMarks === null || totalMarks <= 0) return { grade: 'N/A', color: '#7f8c8d' }; 
-
-            const percentage = (marks / totalMarks) * 100;
-
-            // Use custom grade rules if available and sorted by percentage descending
+        function calculateGrade(marks, totalForContext) { 
+            if (totalForContext === null || totalForContext <= 0) return { grade: 'N/A', color: '#7f8c8d' }; 
+            const percentage = (marks / totalForContext) * 100; 
             if (gradeRules.length > 0) {
-                for (const rule of gradeRules) { // Assumes gradeRules is sorted
-                    if (percentage >= rule.percentage) {
-                        // You might want to define colors for custom grades or use a default
-                        return { grade: rule.name, color: getColorForGrade(rule.name) };
-                    }
+                for (const rule of gradeRules) { 
+                    if (percentage >= rule.percentage) return { grade: rule.name, color: getColorForGrade(rule.name) };
                 }
-                 return { grade: 'F', color: '#e74c3c' }; // Default if no custom rule matches above 0
+                 return { grade: 'F', color: '#e74c3c' }; 
             }
-
-
-            // Default grading logic if no custom rules
             if (percentage >= 80) return { grade: 'A+', color: '#27ae60' }; 
             if (percentage >= 70) return { grade: 'A', color: '#2ecc71' }; 
             if (percentage >= 60) return { grade: 'A-', color: '#1abc9c' }; 
@@ -782,59 +609,79 @@
             return { grade: 'F', color: '#e74c3c' }; 
         }
         
-        function getColorForGrade(gradeName) {
-            // Simple example: try to match default grade colors or return a generic one
-            // This function can be expanded for more specific color rules for custom grades
-            const name = gradeName.toUpperCase();
-            if (name.includes('A+')) return '#27ae60';
-            if (name.includes('A-')) return '#1abc9c';
-            if (name.includes('A')) return '#2ecc71';
-            if (name.includes('B')) return '#3498db';
-            if (name.includes('C')) return '#f39c12';
-            if (name.includes('D')) return '#e67e22';
-            if (name.includes('F')) return '#e74c3c';
-            return '#7f8c8d'; // Default color for other custom grades
-        }
-
-
-        function capitalizeName(name) {
-            return name
-                .toLowerCase()
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-        }
+        function getColorForGrade(gradeName) { const name = gradeName.toUpperCase(); if (name.includes('A+')) return '#27ae60'; if (name.includes('A-')) return '#1abc9c'; if (name.includes('A')) return '#2ecc71'; if (name.includes('B')) return '#3498db'; if (name.includes('C')) return '#f39c12'; if (name.includes('D')) return '#e67e22'; if (name.includes('F')) return '#e74c3c'; return '#7f8c8d'; }
+        function capitalizeName(name) { return name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '); }
 
         function updateTable() {
-            students.sort((a, b) => b.marks - a.marks);
+            // students.sort(...); // Sorting logic to be decided based on overall marks later
+            gradingTableHead.innerHTML = ''; // Clear existing headers
+            gradingTableBody.innerHTML = ''; // Clear existing rows
 
-            gradingTable.innerHTML = ''; 
+            // Create Headers
+            const headerRow = gradingTableHead.insertRow();
+            headerRow.insertCell().textContent = 'Serial';
+            headerRow.insertCell().textContent = 'Name';
+            definedSubjects.forEach(subject => {
+                const th = document.createElement('th');
+                th.textContent = `${subject} (Marks | Grade)`;
+                headerRow.appendChild(th);
+            });
+            headerRow.insertCell().textContent = 'Total Marks';
+            headerRow.insertCell().textContent = 'Overall Grade';
+            headerRow.insertCell().textContent = 'Comments';
+            
+            // Create Body Rows
             students.forEach((student, index) => {
-                const row = gradingTable.insertRow();
+                const row = gradingTableBody.insertRow();
                 row.dataset.studentId = student.id; 
+                row.insertCell().textContent = index + 1;
+                
+                const nameCell = row.insertCell();
+                nameCell.textContent = student.name;
+                nameCell.className = 'editable name-cell';
 
-                // Added comments cell
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td contenteditable="true" class="editable name-cell">${student.name}</td>
-                    <td contenteditable="true" class="editable marks-cell">${student.marks}</td>
-                    <td data-grade-color="${student.gradeInfo.color}" style="--grade-color: ${student.gradeInfo.color};"><b>${student.gradeInfo.grade}</b></td>
-                    <td contenteditable="true" class="editable comments-cell">${student.comments || ''}</td> 
-                `;
+                let studentTotalMarks = 0;
+                let subjectsAttempted = 0;
 
-                const nameCell = row.querySelector('.name-cell');
-                const marksCell = row.querySelector('.marks-cell');
-                const commentsCell = row.querySelector('.comments-cell'); // Comments cell
+                definedSubjects.forEach(subjectName => {
+                    const cell = row.insertCell();
+                    cell.className = 'subject-marks-cell';
+                    const mark = student.subjectMarks[subjectName];
+                    if (mark !== undefined && mark !== null) {
+                        const gradeInfo = calculateGrade(mark, totalMarksPerSubject);
+                        cell.innerHTML = `${mark} <b style="background-color:${gradeInfo.color};">${gradeInfo.grade}</b>`;
+                        studentTotalMarks += mark;
+                        subjectsAttempted++;
+                    } else {
+                        cell.textContent = '-';
+                    }
+                });
+
+                row.insertCell().textContent = studentTotalMarks;
+                
+                const overallGradeCell = row.insertCell();
+                if (definedSubjects.length > 0) {
+                    const maxPossibleTotalMarks = definedSubjects.length * totalMarksPerSubject;
+                    // Only calculate overall grade if at least one subject has marks, or all subjects have marks.
+                    // For now, let's assume grade is based on sum of marks for subjects taken vs max for those taken, or overall max.
+                    // Simpler: grade based on total marks obtained vs max possible for all defined subjects.
+                    const overallGradeInfo = calculateGrade(studentTotalMarks, maxPossibleTotalMarks);
+                    overallGradeCell.innerHTML = `<b style="background-color:${overallGradeInfo.color};">${overallGradeInfo.grade}</b>`;
+                    overallGradeCell.style.textAlign = 'center';
+
+                } else {
+                    overallGradeCell.textContent = '-';
+                }
+
+                const commentsCell = row.insertCell();
+                commentsCell.textContent = student.comments || '';
+                commentsCell.className = 'editable comments-cell';
 
                 nameCell.addEventListener('blur', handleEdit);
-                marksCell.addEventListener('blur', handleEdit);
-                commentsCell.addEventListener('blur', handleEdit); // Add listener for comments
-
+                commentsCell.addEventListener('blur', handleEdit); 
                 nameCell.addEventListener('keydown', handleEditKeydown);
-                marksCell.addEventListener('keydown', handleEditKeydown);
-                commentsCell.addEventListener('keydown', handleEditKeydown); // Add listener for comments
+                commentsCell.addEventListener('keydown', handleEditKeydown); 
             });
-
             updateDownloadButtonVisibility();
         }
 
@@ -843,175 +690,172 @@
              const row = cell.closest('tr');
              const studentId = Number(row.dataset.studentId);
              const student = students.find(s => s.id === studentId);
-
              if (!student) return;
-
              const newValue = cell.textContent.trim();
-
              if (cell.classList.contains('name-cell')) {
-                 const capitalized = capitalizeName(newValue);
-                 if (newValue && student.name !== capitalized) {
-                     student.name = capitalized;
-                     cell.textContent = capitalized; 
+                 const oldName = student.name;
+                 const newNameCapitalized = capitalizeName(newValue);
+                 if (newValue && oldName.toLowerCase() !== newNameCapitalized.toLowerCase()) {
+                     // Check if new name already exists (case-insensitive)
+                     if (students.some(s => s.name.toLowerCase() === newNameCapitalized.toLowerCase() && s.id !== student.id)) {
+                         alert(`Student name "${newNameCapitalized}" already exists.`);
+                         cell.textContent = oldName; // Revert
+                         return;
+                     }
+                     student.name = newNameCapitalized;
+                     cell.textContent = newNameCapitalized; 
+                     // updateTable(); // Potentially re-sort if sorting by name
                  } else {
                      cell.textContent = student.name; 
                  }
-             } else if (cell.classList.contains('marks-cell')) {
-                 const newMarks = Number(newValue);
-                 if (!isNaN(newMarks) && newMarks >= 0 && newMarks <= totalMarks) {
-                     if (student.marks !== newMarks) {
-                         student.marks = newMarks;
-                         student.gradeInfo = calculateGrade(newMarks);
-                         updateTable(); 
-                     }
-                 } else {
-                      alert(`Please enter valid marks between 0 and ${totalMarks}`);
-                      const potentiallyNewRow = gradingTable.querySelector(`tr[data-student-id="${studentId}"]`);
-                      if (potentiallyNewRow) {
-                         potentiallyNewRow.querySelector('.marks-cell').textContent = student.marks;
-                      }
-                 }
-             } else if (cell.classList.contains('comments-cell')) { // Handle comments edit
+             } else if (cell.classList.contains('comments-cell')) { 
                 if (student.comments !== newValue) {
                     student.comments = newValue;
-                    // No table re-render needed if only comments change, just update data
-                    // Optionally save to localStorage here if you persist student data
                 }
             }
          }
 
         function handleEditKeydown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
-                event.target.blur(); 
-            } else if (event.key === 'Escape') {
+            if (event.key === 'Enter') { event.preventDefault(); event.target.blur(); } 
+            else if (event.key === 'Escape') {
                 event.preventDefault();
                 const cell = event.target;
                 const row = cell.closest('tr');
                 const studentId = Number(row.dataset.studentId);
                 const student = students.find(s => s.id === studentId);
                 if (student) {
-                    if (cell.classList.contains('name-cell')) {
-                        cell.textContent = student.name;
-                    } else if (cell.classList.contains('marks-cell')) {
-                        cell.textContent = student.marks;
-                    } else if (cell.classList.contains('comments-cell')) { // Revert comments
-                        cell.textContent = student.comments || '';
-                    }
+                    if (cell.classList.contains('name-cell')) cell.textContent = student.name;
+                    else if (cell.classList.contains('comments-cell')) cell.textContent = student.comments || '';
                 }
                 cell.blur();
             }
         }
 
+        function updateDownloadButtonVisibility() { downloadPdfBtn.style.display = students.length > 0 ? 'inline-block' : 'none'; }
 
-        function updateDownloadButtonVisibility() {
-            downloadPdfBtn.style.display = students.length > 0 ? 'inline-block' : 'none';
-        }
-
-        // --- PDF Download ---
-        function downloadTableAsPDF() {
+        function downloadTableAsPDF() { /* ... PDF generation logic ... */ 
+            // This will need significant update for multi-subject columns in PDF
             if (students.length === 0) return;
-
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
+            const doc = new jsPDF({ orientation: 'landscape' }); // Use landscape for more columns
             const docTitle = tableTitle.textContent;
             const docInstitution = institutionName.textContent;
-            const primaryColor = '#4a90e2'; 
-            const headerColor = '#f8f9fa'; 
-            const textColor = '#4a4a4a';   
-
-            doc.setFontSize(18);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(primaryColor);
+            doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.setTextColor('#4a90e2');
             doc.text(docInstitution, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'normal'); 
-            doc.setTextColor(textColor);
+            doc.setFontSize(14); doc.setFont('helvetica', 'normal'); doc.setTextColor('#4a4a4a');
             doc.text(docTitle, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            doc.setFontSize(10); doc.setFont('helvetica', 'italic');
+            doc.text(`Max Marks per Subject: ${totalMarksPerSubject}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
 
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'italic');
-            doc.setTextColor(textColor);
-            doc.text(`Total Marks: ${totalMarks}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
-
-            // Modified tableColumn to include "Comments"
-            const tableColumn = ["Serial", "Name", "Marks", "Grade", "Comments"];
-            const tableRows = students.map((student, index) => [
-                index + 1,
-                student.name,
-                student.marks, 
-                student.gradeInfo.grade,
-                student.comments || '' // Add comments to PDF row
-            ]);
-
-            doc.autoTable({
-                head: [tableColumn],
-                body: tableRows,
-                startY: 45, 
-                theme: 'grid', 
-                headStyles: {
-                    fillColor: headerColor, 
-                    textColor: textColor,   
-                    fontStyle: 'bold',
-                    halign: 'center'
-                },
-                styles: {
-                    font: 'helvetica',
-                    fontSize: 10,
-                    cellPadding: 3,
-                    textColor: textColor,
-                },
-                columnStyles: {
-                    0: { halign: 'center', cellWidth: 15 }, 
-                    1: { halign: 'left', cellWidth: 'auto' }, // Name - auto width
-                    2: { halign: 'center', cellWidth: 20 }, 
-                    3: { halign: 'center', cellWidth: 20 },  
-                    4: { halign: 'left', cellWidth: 'auto' } // Comments - auto width
-                },
-                didParseCell: function (data) {
-                     if (data.column.index === 0 || data.column.index === 2 || data.column.index === 3) {
-                         data.cell.styles.halign = 'center';
-                     }
-                     if (data.column.index === 3 && data.row.section === 'body') { // Grade column
-                        const student = students[data.row.index];
-                        if (student && student.gradeInfo) {
-                            data.cell.styles.fillColor = student.gradeInfo.color;
-                            data.cell.styles.textColor = '#FFFFFF'; // White text for contrast
-                        }
-                        data.cell.styles.fontStyle = 'bold';
-                     }
-                },
-                didDrawPage: function (data) {
-                    // Add footer with date
-                    const dateStr = new Date().toLocaleDateString();
-                    doc.setFontSize(8);
-                    doc.setTextColor(100); // Light grey color for footer
-                    // Position from bottom, centered. Page numbers are typically on the right.
-                    const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                    doc.text(dateStr, data.settings.margin.left, pageHeight - 10, {
-                        align: 'left'
-                    });
-                    doc.text(`Page ${data.pageNumber}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, pageHeight - 10, {
-                        align: 'right'
-                    });
-                }
+            const head = [['Serial', 'Name']];
+            definedSubjects.forEach(subject => head[0].push(`${subject}`));
+            head[0].push('Total Marks', 'Overall Grade', 'Comments');
+            
+            const body = students.map((student, index) => {
+                const rowData = [index + 1, student.name];
+                let studentTotalMarks = 0;
+                definedSubjects.forEach(subject => {
+                    const mark = student.subjectMarks[subject];
+                    if (mark !== undefined && mark !== null) {
+                        const gradeInfo = calculateGrade(mark, totalMarksPerSubject);
+                        rowData.push(`${mark} (${gradeInfo.grade})`);
+                        studentTotalMarks += mark;
+                    } else {
+                        rowData.push('-');
+                    }
+                });
+                rowData.push(studentTotalMarks);
+                const maxPossibleTotalMarks = definedSubjects.length * totalMarksPerSubject;
+                const overallGradeInfo = calculateGrade(studentTotalMarks, maxPossibleTotalMarks);
+                rowData.push(overallGradeInfo.grade);
+                rowData.push(student.comments || '');
+                return rowData;
             });
 
-            const pdfFileName = `${docTitle.replace(/\s+/g, '_') || 'Grading_Table'}.pdf`;
-            doc.save(pdfFileName);
-        }
+            doc.autoTable({
+                head: head,
+                body: body,
+                startY: 45, 
+                theme: 'grid', 
+                headStyles: { fillColor: '#f8f9fa', textColor: '#4a4a4a', fontStyle: 'bold', halign: 'center' },
+                styles: { font: 'helvetica', fontSize: 8, cellPadding: 2, textColor: '#4a4a4a' },
+                columnStyles: { /* Dynamic column styling might be complex here, default should be okay */ },
+                didParseCell: function (data) {
+                    const student = students[data.row.index]; // Get student for the current row, if it's a body row
 
+                    // Column indices determined dynamically from the 'head' array
+                    const nameColumnIndex = head[0].indexOf('Name');
+                    const firstSubjectColumnIndex = head[0].indexOf(definedSubjects[0]); // Index of the first subject
+                    const lastSubjectColumnIndex = head[0].indexOf(definedSubjects[definedSubjects.length - 1]); // Index of the last subject
+                    const totalMarksColumnIndex = head[0].indexOf('Total Marks');
+                    const overallGradeColumnIndex = head[0].indexOf('Overall Grade');
+
+                    // Default vertical alignment for all body cells
+                    if (data.row.section === 'body') {
+                        data.cell.styles.valign = 'middle';
+                    }
+                    
+                    // Center Serial column (index 0)
+                    if (data.column.index === 0) {
+                        data.cell.styles.halign = 'center';
+                    }
+
+                    // Style Student Names (index from nameColumnIndex)
+                    if (data.column.index === nameColumnIndex && data.row.section === 'body') {
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+
+                    // Style Individual Subject Grade Cells
+                    if (definedSubjects.length > 0 && data.column.index >= firstSubjectColumnIndex && data.column.index <= lastSubjectColumnIndex && data.row.section === 'body' && student) {
+                        // The subjectName is actually the header text itself for these columns
+                        // The body mapping already creates "Mark (Grade)"
+                        const subjectNameFromHeader = head[0][data.column.index];
+                        // Extract subject name from "SubjectName (Marks | Grade)" or just "SubjectName" if new format
+                        const subjectName = subjectNameFromHeader.split(" ")[0]; 
+                        const mark = student.subjectMarks[subjectName];
+
+                        if (mark !== undefined && mark !== null) {
+                            const gradeInfo = calculateGrade(mark, totalMarksPerSubject);
+                            data.cell.styles.fillColor = gradeInfo.color;
+                            data.cell.styles.textColor = '#FFFFFF';
+                        }
+                        data.cell.styles.halign = 'center';
+                    }
+                    
+                    // Center Total Marks column
+                    if (data.column.index === totalMarksColumnIndex && data.row.section === 'body') {
+                         data.cell.styles.halign = 'center';
+                    }
+
+                    // Style Overall Grade Cell
+                    if (data.column.index === overallGradeColumnIndex && data.row.section === 'body' && student) {
+                        let studentTotalMarks = 0;
+                        definedSubjects.forEach(subjectNameKey => { // Use subjectNameKey to avoid conflict
+                            if (student.subjectMarks[subjectNameKey] !== undefined && student.subjectMarks[subjectNameKey] !== null) {
+                                studentTotalMarks += student.subjectMarks[subjectNameKey];
+                            }
+                        });
+                        const maxPossibleTotalMarks = definedSubjects.length * totalMarksPerSubject;
+                        if (maxPossibleTotalMarks > 0) { 
+                           const overallGradeInfo = calculateGrade(studentTotalMarks, maxPossibleTotalMarks);
+                           data.cell.styles.fillColor = overallGradeInfo.color;
+                           data.cell.styles.textColor = '#FFFFFF';
+                           data.cell.styles.fontStyle = 'bold';
+                        }
+                        data.cell.styles.halign = 'center';
+                    }
+                },
+                didDrawPage: function (data) {
+                    const dateStr = new Date().toLocaleDateString();
+                    doc.setFontSize(8); doc.setTextColor(100); 
+                    const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+                    doc.text(dateStr, data.settings.margin.left, pageHeight - 10, { align: 'left' });
+                    doc.text(`Page ${data.pageNumber}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, pageHeight - 10, { align: 'right' });
+                }
+            });
+            doc.save(`${docTitle.replace(/\s+/g, '_') || 'Grading_Table'}.pdf`);
+        }
         downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
-        
-        // Initialize grade scale manager visibility (initially hidden until total marks are set)
-        const gradeScaleManager = document.querySelector('.grade-scale-manager');
-        if (gradeScaleManager) {
-            gradeScaleManager.style.display = 'none';
-        }
-
-
     </script>
 </body>
 </html>
