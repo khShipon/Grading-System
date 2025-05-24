@@ -108,7 +108,8 @@
         }
 
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        textarea { /* Added textarea styling */
             flex-grow: 1; /* Allow inputs to grow */
             min-width: 150px; /* Minimum width */
             padding: 12px 15px;
@@ -121,11 +122,18 @@
         }
 
         input[type="text"]:focus,
-        input[type="number"]:focus {
+        input[type="number"]:focus,
+        textarea:focus { /* Added textarea styling */
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
             outline: none;
         }
+        
+        textarea { /* Specific textarea adjustments */
+            min-height: 60px; /* Default height */
+            resize: vertical; /* Allow vertical resizing */
+        }
+
 
         button {
             padding: 12px 20px;
@@ -204,9 +212,11 @@
         /* Center specific columns */
         th:first-child, td:first-child, /* Serial */
         th:nth-child(3), td:nth-child(3), /* Marks */
-        th:last-child, td:last-child { /* Grade */
+        th:nth-child(4), td:nth-child(4) { /* Grade - adjusted for new Comments column */
             text-align: center;
         }
+        /* Last column (now Comments) might not always be centered, depends on content */
+
 
         /* Remove border from last row */
         tr:last-child td {
@@ -259,6 +269,60 @@
              background-color: var(--grade-color, var(--dark-color)); /* Use dynamic color */
         }
 
+        .grade-scale-manager {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .grade-scale-manager h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        #grade-scale-definitions {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .grade-rule-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .grade-rule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* For better vertical alignment */
+            padding: 8px 0; /* Increased padding slightly */
+            border-bottom: 1px solid var(--border-color); /* Add a separator */
+        }
+        .grade-rule-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+
+        .button-remove-rule {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 4px 10px; /* Adjusted padding */
+            font-size: 13px;  /* Adjusted font size */
+            border: none;
+            border-radius: 5px; /* Consistent border-radius */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button-remove-rule:hover {
+            background-color: #a00115; /* Darker red on hover */
+        }
+
+        td.comments-cell {
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            vertical-align: middle; /* Or top if content is lengthy */
+            min-width: 150px; /* Ensure a minimum width for comments */
+            max-width: 300px; /* Prevent extremely wide cells */
+        }
 
         .modal {
             display: none;
@@ -389,9 +453,22 @@
             <button type="button" id="set-total-marks">Set Total Marks</button>
         </form>
 
+        <div class="grade-scale-manager">
+            <h2>Customize Grade Scale</h2>
+            <form id="grade-scale-form">
+                <input type="text" id="grade-name-input" placeholder="e.g., Excellent, A+, Pass" required>
+                <input type="number" id="grade-percentage-input" placeholder="e.g., 90" step="any" required min="0" max="100">
+                <button type="button" id="add-grade-rule">Add Grade Rule</button>
+            </form>
+            <div id="grade-scale-definitions">
+                <!-- Grade rules will be displayed here -->
+            </div>
+        </div>
+
         <form id="grading-form" style="display: none;">
             <input type="text" id="student-name" placeholder="Student name" required>
             <input type="number" id="student-marks" placeholder="Marks obtained (e.g., 85.5)" required step="any">
+            <textarea id="student-comments" placeholder="Enter comments..."></textarea>
             <button type="submit">Add Student</button>
             <div class="error" id="error-message"></div>
         </form>
@@ -405,6 +482,7 @@
                     <th>Name</th>
                     <th>Marks</th>
                     <th>Grade</th>
+                    <th>Comments</th>
                 </tr>
             </thead>
             <tbody id="grading-table">
@@ -452,9 +530,16 @@
         const tableTitle = document.getElementById('table-title');
         const institutionModal = document.getElementById('institution-modal');
         const titleModal = document.getElementById('title-modal');
+        // New elements for grade scale
+        const gradeScaleForm = document.getElementById('grade-scale-form');
+        const gradeScaleDefinitions = document.getElementById('grade-scale-definitions');
+        const studentComments = document.getElementById('student-comments');
+
 
         let totalMarks = null;
         const students = []; // Consider using an object/Map if IDs are needed later
+        let gradeRules = []; // To store custom grade rules: { name: 'A', percentage: 80 }
+
 
         // --- Utility Functions ---
         function showModal(modalElement) {
@@ -474,6 +559,12 @@
 
             const savedTableTitle = localStorage.getItem('tableTitle');
             tableTitle.textContent = savedTableTitle || 'Grading Table'; // Default text
+
+            // Load saved grade rules
+            const savedGradeRules = JSON.parse(localStorage.getItem('gradeRules') || '[]');
+            gradeRules = savedGradeRules;
+            renderGradeRules();
+
 
              // Re-load students if needed (optional, requires saving students to localStorage)
              // const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
@@ -536,16 +627,87 @@
             });
         });
 
+        // --- Grade Scale Management ---
+        if (gradeScaleForm) { // Ensure element exists
+            gradeScaleForm.addEventListener('click', (event) => { // Use click on form for button
+                if (event.target.id === 'add-grade-rule') {
+                    const gradeNameInput = document.getElementById('grade-name-input');
+                    const gradePercentageInput = document.getElementById('grade-percentage-input');
+                    const name = gradeNameInput.value.trim();
+                    const percentage = parseFloat(gradePercentageInput.value);
+
+                    if (name && !isNaN(percentage) && percentage >= 0 && percentage <= 100) {
+                        // Check for duplicate percentages or names (optional)
+                        if (gradeRules.some(rule => rule.name.toLowerCase() === name.toLowerCase() || rule.percentage === percentage)) {
+                            alert('Grade name or percentage already exists.');
+                            return;
+                        }
+                        gradeRules.push({ name, percentage });
+                        gradeRules.sort((a, b) => b.percentage - a.percentage); // Keep sorted
+                        localStorage.setItem('gradeRules', JSON.stringify(gradeRules));
+                        renderGradeRules();
+                        gradeNameInput.value = '';
+                        gradePercentageInput.value = '';
+                        updateTable(); // Re-calculate grades if rules change
+                    } else {
+                        alert('Please enter a valid grade name and percentage (0-100).');
+                    }
+                }
+            });
+        }
+
+        function renderGradeRules() {
+            if (!gradeScaleDefinitions) return;
+            gradeScaleDefinitions.innerHTML = ''; // Clear existing
+            if (gradeRules.length === 0) {
+                gradeScaleDefinitions.innerHTML = '<p>No custom grade rules defined. Default scale will be used.</p>';
+                return;
+            }
+            const ul = document.createElement('ul');
+            ul.className = 'grade-rule-list'; // Use CSS class
+
+            gradeRules.forEach(rule => {
+                const li = document.createElement('li');
+                li.className = 'grade-rule-item'; // Use CSS class
+                
+                const span = document.createElement('span');
+                span.textContent = `${rule.name}: ${rule.percentage}% and above`;
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                // Keep 'remove-grade-rule' for JS targeting, add new class for styling
+                button.className = 'remove-grade-rule button-remove-rule'; 
+                button.dataset.percentage = rule.percentage;
+                button.textContent = 'Remove';
+                
+                li.appendChild(span);
+                li.appendChild(button);
+                ul.appendChild(li);
+            });
+            gradeScaleDefinitions.appendChild(ul);
+
+            // Add event listeners for remove buttons
+            gradeScaleDefinitions.querySelectorAll('.remove-grade-rule').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const percentageToRemove = parseFloat(event.target.dataset.percentage);
+                    gradeRules = gradeRules.filter(rule => rule.percentage !== percentageToRemove);
+                    localStorage.setItem('gradeRules', JSON.stringify(gradeRules));
+                    renderGradeRules();
+                    updateTable(); // Re-calculate grades
+                });
+            });
+        }
+
+
         // --- Core Grading Logic ---
         document.getElementById('set-total-marks').addEventListener('click', () => {
-            // ***MODIFIED: Use parseFloat***
             const inputMarks = parseFloat(document.getElementById('total-marks').value);
             if (!isNaN(inputMarks) && inputMarks > 0) {
                 totalMarks = inputMarks;
-                // localStorage.setItem('totalMarks', totalMarks); // Optional: save total marks
                 totalMarksForm.style.display = 'none';
-                gradingForm.style.display = 'flex'; // Changed to flex
-                downloadPdfBtn.style.display = 'inline-block'; // Show download button
+                gradingForm.style.display = 'flex'; 
+                if(gradeScaleManager) gradeScaleManager.style.display = 'block'; // Show grade scale manager
+                downloadPdfBtn.style.display = 'inline-block'; 
                 document.getElementById('student-name').focus();
             } else {
                  alert('Please enter a valid positive number for total marks.');
@@ -555,13 +717,16 @@
 
         gradingForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            errorMessage.textContent = ''; // Clear previous errors
+            errorMessage.textContent = ''; 
             const studentNameInput = document.getElementById('student-name');
             const studentMarksInput = document.getElementById('student-marks');
+            const studentCommentsInput = document.getElementById('student-comments');
+
 
             const studentName = studentNameInput.value.trim();
-             // ***MODIFIED: Use parseFloat***
             const studentMarks = parseFloat(studentMarksInput.value);
+            const comments = studentCommentsInput.value.trim();
+
 
             if (!studentName) {
                 errorMessage.textContent = 'Please enter student name.';
@@ -575,33 +740,62 @@
             }
 
             const student = {
-                id: Date.now(), // Simple unique ID
+                id: Date.now(), 
                 name: capitalizeName(studentName),
-                marks: studentMarks, // Simplified structure
-                gradeInfo: calculateGrade(studentMarks) // Store grade object { grade, color }
+                marks: studentMarks, 
+                gradeInfo: calculateGrade(studentMarks),
+                comments: comments // Store comments
             };
 
             students.push(student);
-            // localStorage.setItem('students', JSON.stringify(students)); // Optional: save students
             updateTable();
             studentNameInput.value = '';
             studentMarksInput.value = '';
-            studentNameInput.focus(); // Focus back on name for next entry
+            studentCommentsInput.value = ''; // Clear comments field
+            studentNameInput.focus(); 
         });
 
         function calculateGrade(marks) {
-            if (totalMarks === null || totalMarks <= 0) return { grade: 'N/A', color: '#7f8c8d' }; // Handle case where totalMarks isn't set
+            if (totalMarks === null || totalMarks <= 0) return { grade: 'N/A', color: '#7f8c8d' }; 
 
             const percentage = (marks / totalMarks) * 100;
-            // Define grades with colors directly
-            if (percentage >= 80) return { grade: 'A+', color: '#27ae60' }; // Green
-            if (percentage >= 70) return { grade: 'A', color: '#2ecc71' }; // Lighter Green
-            if (percentage >= 60) return { grade: 'A-', color: '#1abc9c' }; // Turquoise
-            if (percentage >= 50) return { grade: 'B', color: '#3498db' }; // Blue
-            if (percentage >= 40) return { grade: 'C', color: '#f39c12' }; // Orange
-            if (percentage >= 33) return { grade: 'D', color: '#e67e22' }; // Darker Orange
-            return { grade: 'F', color: '#e74c3c' }; // Red
+
+            // Use custom grade rules if available and sorted by percentage descending
+            if (gradeRules.length > 0) {
+                for (const rule of gradeRules) { // Assumes gradeRules is sorted
+                    if (percentage >= rule.percentage) {
+                        // You might want to define colors for custom grades or use a default
+                        return { grade: rule.name, color: getColorForGrade(rule.name) };
+                    }
+                }
+                 return { grade: 'F', color: '#e74c3c' }; // Default if no custom rule matches above 0
+            }
+
+
+            // Default grading logic if no custom rules
+            if (percentage >= 80) return { grade: 'A+', color: '#27ae60' }; 
+            if (percentage >= 70) return { grade: 'A', color: '#2ecc71' }; 
+            if (percentage >= 60) return { grade: 'A-', color: '#1abc9c' }; 
+            if (percentage >= 50) return { grade: 'B', color: '#3498db' }; 
+            if (percentage >= 40) return { grade: 'C', color: '#f39c12' }; 
+            if (percentage >= 33) return { grade: 'D', color: '#e67e22' }; 
+            return { grade: 'F', color: '#e74c3c' }; 
         }
+        
+        function getColorForGrade(gradeName) {
+            // Simple example: try to match default grade colors or return a generic one
+            // This function can be expanded for more specific color rules for custom grades
+            const name = gradeName.toUpperCase();
+            if (name.includes('A+')) return '#27ae60';
+            if (name.includes('A-')) return '#1abc9c';
+            if (name.includes('A')) return '#2ecc71';
+            if (name.includes('B')) return '#3498db';
+            if (name.includes('C')) return '#f39c12';
+            if (name.includes('D')) return '#e67e22';
+            if (name.includes('F')) return '#e74c3c';
+            return '#7f8c8d'; // Default color for other custom grades
+        }
+
 
         function capitalizeName(name) {
             return name
@@ -612,30 +806,33 @@
         }
 
         function updateTable() {
-            // Sort by marks descending
             students.sort((a, b) => b.marks - a.marks);
 
-            gradingTable.innerHTML = ''; // Clear existing table rows
+            gradingTable.innerHTML = ''; 
             students.forEach((student, index) => {
                 const row = gradingTable.insertRow();
-                row.dataset.studentId = student.id; // Add ID for easier reference
+                row.dataset.studentId = student.id; 
 
+                // Added comments cell
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td contenteditable="true" class="editable name-cell">${student.name}</td>
                     <td contenteditable="true" class="editable marks-cell">${student.marks}</td>
                     <td data-grade-color="${student.gradeInfo.color}" style="--grade-color: ${student.gradeInfo.color};"><b>${student.gradeInfo.grade}</b></td>
+                    <td contenteditable="true" class="editable comments-cell">${student.comments || ''}</td> 
                 `;
 
-                // Add blur event listeners for inline editing
                 const nameCell = row.querySelector('.name-cell');
                 const marksCell = row.querySelector('.marks-cell');
+                const commentsCell = row.querySelector('.comments-cell'); // Comments cell
 
                 nameCell.addEventListener('blur', handleEdit);
                 marksCell.addEventListener('blur', handleEdit);
-                // Optional: Add keydown listener (Enter/Escape) for better UX
+                commentsCell.addEventListener('blur', handleEdit); // Add listener for comments
+
                 nameCell.addEventListener('keydown', handleEditKeydown);
                 marksCell.addEventListener('keydown', handleEditKeydown);
+                commentsCell.addEventListener('keydown', handleEditKeydown); // Add listener for comments
             });
 
             updateDownloadButtonVisibility();
@@ -655,42 +852,40 @@
                  const capitalized = capitalizeName(newValue);
                  if (newValue && student.name !== capitalized) {
                      student.name = capitalized;
-                     cell.textContent = capitalized; // Update cell display immediately
-                     // No table re-render needed if only name changes
-                     // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
+                     cell.textContent = capitalized; 
                  } else {
-                     cell.textContent = student.name; // Revert if invalid or unchanged
+                     cell.textContent = student.name; 
                  }
              } else if (cell.classList.contains('marks-cell')) {
-                  // ***MODIFIED: Use parseFloat and Number() which handles decimals***
                  const newMarks = Number(newValue);
                  if (!isNaN(newMarks) && newMarks >= 0 && newMarks <= totalMarks) {
                      if (student.marks !== newMarks) {
                          student.marks = newMarks;
                          student.gradeInfo = calculateGrade(newMarks);
-                         // Re-render needed to update sort order and grade display
-                         updateTable();
-                         // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
+                         updateTable(); 
                      }
-                     // No need to revert textContent here as updateTable() handles it
                  } else {
-                      // Revert if invalid - find the cell again after potential re-render
                       alert(`Please enter valid marks between 0 and ${totalMarks}`);
                       const potentiallyNewRow = gradingTable.querySelector(`tr[data-student-id="${studentId}"]`);
                       if (potentiallyNewRow) {
                          potentiallyNewRow.querySelector('.marks-cell').textContent = student.marks;
                       }
                  }
-             }
+             } else if (cell.classList.contains('comments-cell')) { // Handle comments edit
+                if (student.comments !== newValue) {
+                    student.comments = newValue;
+                    // No table re-render needed if only comments change, just update data
+                    // Optionally save to localStorage here if you persist student data
+                }
+            }
          }
 
         function handleEditKeydown(event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent newline
-                event.target.blur(); // Trigger the blur event to save
+                event.preventDefault(); 
+                event.target.blur(); 
             } else if (event.key === 'Escape') {
                 event.preventDefault();
-                // Revert changes manually and blur
                 const cell = event.target;
                 const row = cell.closest('tr');
                 const studentId = Number(row.dataset.studentId);
@@ -700,6 +895,8 @@
                         cell.textContent = student.name;
                     } else if (cell.classList.contains('marks-cell')) {
                         cell.textContent = student.marks;
+                    } else if (cell.classList.contains('comments-cell')) { // Revert comments
+                        cell.textContent = student.comments || '';
                     }
                 }
                 cell.blur();
@@ -718,50 +915,45 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // --- Document Styling ---
             const docTitle = tableTitle.textContent;
             const docInstitution = institutionName.textContent;
-            const primaryColor = '#4a90e2'; // Match CSS
-            const headerColor = '#f8f9fa'; // Match CSS
-            const textColor = '#4a4a4a';   // Match CSS
+            const primaryColor = '#4a90e2'; 
+            const headerColor = '#f8f9fa'; 
+            const textColor = '#4a4a4a';   
 
-            // Institution Name
             doc.setFontSize(18);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(primaryColor);
             doc.text(docInstitution, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
 
-            // Table Title
             doc.setFontSize(14);
-            doc.setFont('helvetica', 'normal'); // Normal weight for title
+            doc.setFont('helvetica', 'normal'); 
             doc.setTextColor(textColor);
             doc.text(docTitle, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
 
-             // Add Total Marks Info
             doc.setFontSize(10);
             doc.setFont('helvetica', 'italic');
             doc.setTextColor(textColor);
             doc.text(`Total Marks: ${totalMarks}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
 
-
-            // --- Table Data ---
-            const tableColumn = ["Serial", "Name", "Marks", "Grade"];
+            // Modified tableColumn to include "Comments"
+            const tableColumn = ["Serial", "Name", "Marks", "Grade", "Comments"];
             const tableRows = students.map((student, index) => [
                 index + 1,
                 student.name,
-                student.marks, // Already handles decimals
-                student.gradeInfo.grade
+                student.marks, 
+                student.gradeInfo.grade,
+                student.comments || '' // Add comments to PDF row
             ]);
 
-            // --- AutoTable Generation ---
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
-                startY: 45, // Start table below title
-                theme: 'grid', // 'striped', 'grid', 'plain'
+                startY: 45, 
+                theme: 'grid', 
                 headStyles: {
-                    fillColor: headerColor, // Header background
-                    textColor: textColor,   // Header text
+                    fillColor: headerColor, 
+                    textColor: textColor,   
                     fontStyle: 'bold',
                     halign: 'center'
                 },
@@ -772,32 +964,53 @@
                     textColor: textColor,
                 },
                 columnStyles: {
-                    0: { halign: 'center', cellWidth: 15 }, // Serial
-                    1: { halign: 'left' },                  // Name
-                    2: { halign: 'center', cellWidth: 25 }, // Marks
-                    3: { halign: 'center', cellWidth: 20 }  // Grade
+                    0: { halign: 'center', cellWidth: 15 }, 
+                    1: { halign: 'left', cellWidth: 'auto' }, // Name - auto width
+                    2: { halign: 'center', cellWidth: 20 }, 
+                    3: { halign: 'center', cellWidth: 20 },  
+                    4: { halign: 'left', cellWidth: 'auto' } // Comments - auto width
                 },
                 didParseCell: function (data) {
-                    // Center align specific columns if theme doesn't do it
                      if (data.column.index === 0 || data.column.index === 2 || data.column.index === 3) {
                          data.cell.styles.halign = 'center';
                      }
-                     // Bold Grade text in PDF
-                     if (data.column.index === 3 && data.row.section === 'body') {
+                     if (data.column.index === 3 && data.row.section === 'body') { // Grade column
+                        const student = students[data.row.index];
+                        if (student && student.gradeInfo) {
+                            data.cell.styles.fillColor = student.gradeInfo.color;
+                            data.cell.styles.textColor = '#FFFFFF'; // White text for contrast
+                        }
                         data.cell.styles.fontStyle = 'bold';
-                        // Optional: Add color based on grade (more complex)
-                        // const student = students[data.row.index];
-                        // data.cell.styles.textColor = student.gradeInfo.color; // Can look messy
                      }
+                },
+                didDrawPage: function (data) {
+                    // Add footer with date
+                    const dateStr = new Date().toLocaleDateString();
+                    doc.setFontSize(8);
+                    doc.setTextColor(100); // Light grey color for footer
+                    // Position from bottom, centered. Page numbers are typically on the right.
+                    const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+                    doc.text(dateStr, data.settings.margin.left, pageHeight - 10, {
+                        align: 'left'
+                    });
+                    doc.text(`Page ${data.pageNumber}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, pageHeight - 10, {
+                        align: 'right'
+                    });
                 }
             });
 
-            // --- Save PDF ---
             const pdfFileName = `${docTitle.replace(/\s+/g, '_') || 'Grading_Table'}.pdf`;
             doc.save(pdfFileName);
         }
 
         downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
+        
+        // Initialize grade scale manager visibility (initially hidden until total marks are set)
+        const gradeScaleManager = document.querySelector('.grade-scale-manager');
+        if (gradeScaleManager) {
+            gradeScaleManager.style.display = 'none';
+        }
+
 
     </script>
 </body>
