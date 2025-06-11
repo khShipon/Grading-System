@@ -175,7 +175,7 @@
         }
 
         /* Subject List Display */
-        #subject-list-display {
+        #subject-list-display-initial, #subject-list-display-modal {
             margin-top: 20px;
             padding: 10px 15px;
             border: 1px dashed var(--border-color);
@@ -267,8 +267,9 @@
 
         /* Grade Colors */
         b[data-grade-color] {
-            color: var(--grade-color);
             font-weight: bold;
+            /* Using a CSS variable for the color directly, will be set in JS */
+            color: var(--grade-display-color);
         }
 
         /* Download PDF Button */
@@ -380,6 +381,24 @@
             opacity: 1;
         }
 
+        /* Buttons on Grading Form */
+        #grading-form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            justify-content: flex-end; /* Align buttons to the right */
+            margin-bottom: 10px;
+        }
+        #grading-form-actions .edit-btn {
+            flex-grow: 0; /* Don't grow to fill space */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        #grading-form > button[type="submit"] {
+            margin-top: 10px; /* Space between action buttons and add student */
+            width: 100%;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -415,6 +434,9 @@
             th, td {
                 padding: 10px;
             }
+            #grading-form-actions {
+                justify-content: center; /* Center buttons on small screens */
+            }
         }
     </style>
 </head>
@@ -430,7 +452,7 @@
                 <h2 id="table-title">2nd Year Grading Table</h2>
                 <button id="edit-title" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
             </div>
-            <!-- NEW: Button to manage subjects later -->
+            <!-- Manage Subjects button is now part of the header -->
             <button id="manage-subjects-btn" class="edit-btn"><i class="fas fa-book"></i> Manage Subjects</button>
         </div>
 
@@ -458,13 +480,19 @@
             <div id="subject-marks-inputs">
                 <!-- Subject mark inputs will be added here dynamically by JS -->
             </div>
+            <!-- NEW: Buttons for "Add Subject", "New Entry", "View All Results" -->
+            <div id="grading-form-actions">
+                <button type="button" id="add-subject-from-grading-btn" class="edit-btn"><i class="fas fa-plus"></i> Add Subject</button>
+                <button type="button" id="new-entry-btn" class="edit-btn"><i class="fas fa-sync-alt"></i> New Entry</button>
+                <button type="button" id="view-all-results-btn" class="edit-btn"><i class="fas fa-history"></i> View All Results</button>
+            </div>
             <button type="submit"><i class="fas fa-user-plus"></i> Add Student</button>
             <div class="error" id="error-message"></div>
         </form>
 
         <button id="download-pdf" style="display: none;"><i class="fas fa-file-pdf"></i> Download Table as PDF</button>
 
-        <table>
+        <table id="grading-table-container">
             <thead>
                 <tr id="table-header-row">
                     <!-- Dynamic headers will be inserted by JS -->
@@ -565,7 +593,6 @@
         const subjectErrorMessageModal = document.getElementById('subject-error-message-modal');
         const closeSubjectModalBtn = document.getElementById('close-subject-modal-btn');
 
-
         // Student Grading Form Elements
         const gradingForm = document.getElementById('grading-form');
         const studentNameInput = document.getElementById('student-name');
@@ -573,7 +600,13 @@
         const subjectMarksInputsDiv = document.getElementById('subject-marks-inputs');
         const errorMessageDiv = document.getElementById('error-message');
 
+        // NEW: Buttons on Grading Form
+        const addSubjectFromGradingBtn = document.getElementById('add-subject-from-grading-btn');
+        const newEntryBtn = document.getElementById('new-entry-btn');
+        const viewAllResultsBtn = document.getElementById('view-all-results-btn');
+
         // Table Elements
+        const gradingTableContainer = document.getElementById('grading-table-container'); // Reference to the table itself
         const tableHeaderRow = document.getElementById('table-header-row');
         const gradingTableBody = document.getElementById('grading-table');
 
@@ -587,7 +620,7 @@
             return str.replace(/\b\w/g, char => char.toUpperCase());
         }
 
-        function generateUniqueId(name) {
+        function generateUniqueIdForSubject(name) {
             return name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now();
         }
 
@@ -595,17 +628,17 @@
         function getGradeInfo(percentage) {
             let grade = 'F';
             let gradePoint = 0.00;
-            let color = 'var(--grade-f)';
+            let colorVar = '--grade-f';
 
-            if (percentage >= 80) { grade = 'A+'; gradePoint = 5.00; color = 'var(--grade-a-plus)'; }
-            else if (percentage >= 70) { grade = 'A'; gradePoint = 4.00; color = 'var(--grade-a)'; }
-            else if (percentage >= 60) { grade = 'A-'; gradePoint = 3.50; color = 'var(--grade-a-minus)'; }
-            else if (percentage >= 50) { grade = 'B'; gradePoint = 3.00; color = 'var(--grade-b)'; }
-            else if (percentage >= 40) { grade = 'C'; gradePoint = 2.00; color = 'var(--grade-c)'; }
-            else if (percentage >= 33) { grade = 'D'; gradePoint = 1.00; color = 'var(--grade-d)'; }
-            // else if (percentage >= 0) { grade = 'F'; gradePoint = 0.00; color = 'var(--grade-f)'; } // Already default
+            if (percentage >= 80) { grade = 'A+'; gradePoint = 5.00; colorVar = '--grade-a-plus'; }
+            else if (percentage >= 70) { grade = 'A'; gradePoint = 4.00; colorVar = '--grade-a'; }
+            else if (percentage >= 60) { grade = 'A-'; gradePoint = 3.50; colorVar = '--grade-a-minus'; }
+            else if (percentage >= 50) { grade = 'B'; gradePoint = 3.00; colorVar = '--grade-b'; }
+            else if (percentage >= 40) { grade = 'C'; gradePoint = 2.00; colorVar = '--grade-c'; }
+            else if (percentage >= 33) { grade = 'D'; gradePoint = 1.00; colorVar = '--grade-d'; }
+            // else if (percentage >= 0) { grade = 'F'; gradePoint = 0.00; colorVar = '--grade-f'; } // Already default
 
-            return { grade: grade, gradePoint: gradePoint, color: color };
+            return { grade: grade, gradePoint: gradePoint, color: colorVar };
         }
 
         // --- Persistence (localStorage) ---
@@ -674,7 +707,7 @@
             }
 
             const newSubject = {
-                id: generateUniqueId(name),
+                id: generateUniqueIdForSubject(name),
                 name: capitalize(name),
                 maxMarks: maxMarks
             };
@@ -736,6 +769,7 @@
             initialSubjectSetupSection.style.display = 'none';
             gradingForm.style.display = 'flex'; // Use flex for form layout
             downloadPdfBtn.style.display = 'block';
+            manageSubjectsBtn.style.display = 'flex'; // Show manage subjects button
             renderStudentSubjectInputs();
             updateTableHeader();
             updateTable(); // Render table with loaded students and new headers
@@ -745,6 +779,15 @@
 
         // Event Listeners for Subject Management Modal
         manageSubjectsBtn.addEventListener('click', () => {
+            openModal(subjectManagementModal);
+            renderSubjectList(subjectListDisplayModal);
+            subjectNameInputModal.value = '';
+            subjectMaxMarksInputModal.value = '';
+            subjectNameInputModal.focus();
+        });
+
+        // NEW: Add subject button from grading form
+        addSubjectFromGradingBtn.addEventListener('click', () => {
             openModal(subjectManagementModal);
             renderSubjectList(subjectListDisplayModal);
             subjectNameInputModal.value = '';
@@ -807,7 +850,7 @@
 
             const subjectInputs = subjectMarksInputsDiv.querySelectorAll('input[type="number"]');
             if (subjectInputs.length === 0) {
-                 errorMessageDiv.textContent = 'Please define at least one subject first.';
+                 errorMessageDiv.textContent = 'Please define at least one subject first using "Manage Subjects".';
                  allMarksValid = false;
             }
 
@@ -847,6 +890,20 @@
             studentNameInput.focus();
             populateStudentNameDatalist(); // Update datalist with new student
         });
+
+        // NEW: "New Entry" button functionality
+        newEntryBtn.addEventListener('click', () => {
+            studentNameInput.value = '';
+            subjectMarksInputsDiv.querySelectorAll('input').forEach(input => input.value = '');
+            errorMessageDiv.textContent = '';
+            studentNameInput.focus();
+        });
+
+        // NEW: "View All Results" button functionality
+        viewAllResultsBtn.addEventListener('click', () => {
+            gradingTableContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
 
         // --- Grading Logic ---
 
@@ -948,10 +1005,9 @@
                 const overallGradeCell = row.insertCell();
                 const gradeSpan = document.createElement('b');
                 gradeSpan.textContent = student.overallGradeInfo.grade;
-                gradeSpan.dataset.gradeColor = student.overallGradeInfo.color;
-                // Get the actual CSS variable value
-                const gradeColor = getComputedStyle(document.documentElement).getPropertyValue(student.overallGradeInfo.color);
-                gradeSpan.style.setProperty('--grade-color', gradeColor || student.overallGradeInfo.color); // Fallback to raw value if CSS var fails
+                // Get the actual CSS variable value for display
+                const gradeColorValue = getComputedStyle(document.documentElement).getPropertyValue(student.overallGradeInfo.color);
+                gradeSpan.style.setProperty('--grade-display-color', gradeColorValue);
                 overallGradeCell.appendChild(gradeSpan);
             });
             populateStudentNameDatalist(); // Ensure datalist is updated after table render
@@ -1083,8 +1139,8 @@
                     1: { halign: 'center', cellWidth: 25 }, // Student ID
                     2: { halign: 'left', cellWidth: 40 },  // Name
                     // Dynamic subject columns start from index 3
-                    // Auto-adjust width for subject columns to fill space
-                    // e.g., 'auto' or calculated based on remaining space
+                    // You might need to adjust cellWidths further if too many subjects
+                    // For example: `availableSubjects.map((_, i) => ({ 3 + i: { cellWidth: 'auto' } }))`
                     [3 + availableSubjects.length]: { halign: 'center', cellWidth: 25 }, // Total Marks
                     [3 + availableSubjects.length + 1]: { halign: 'center', cellWidth: 25 } // Overall Grade
                 },
@@ -1096,7 +1152,7 @@
                             // Get computed CSS color value (e.g., #27ae60 from var(--grade-a-plus))
                             const gradeColor = getComputedStyle(document.documentElement).getPropertyValue(student.overallGradeInfo.color);
                             // Set text color for this specific cell
-                            doc.setTextColor(gradeColor || student.overallGradeInfo.color);
+                            doc.setTextColor(gradeColor || student.overallGradeInfo.color); // Fallback if computed style isn't found
                             doc.text(data.cell.text, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center', baseline: 'middle' });
                         }
                     }
@@ -1176,6 +1232,7 @@
                 initialSubjectSetupSection.style.display = 'none';
                 gradingForm.style.display = 'flex';
                 downloadPdfBtn.style.display = 'block';
+                manageSubjectsBtn.style.display = 'flex'; // Ensure "Manage Subjects" is visible
                 renderStudentSubjectInputs(); // Render subject inputs for the grading form
                 updateTableHeader(); // Build table headers based on loaded subjects
                 updateTable(); // Populate table with loaded students
@@ -1184,6 +1241,7 @@
                 initialSubjectSetupSection.style.display = 'block';
                 gradingForm.style.display = 'none';
                 downloadPdfBtn.style.display = 'none';
+                manageSubjectsBtn.style.display = 'none'; // Hide "Manage Subjects" until grading starts
             }
             populateStudentNameDatalist(); // Populate datalist on load
         });
