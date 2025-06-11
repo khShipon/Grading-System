@@ -21,6 +21,15 @@
             --info-color: #3498db;
             --text-color: #333;
             --highlight-color: #f0f8ff; /* AliceBlue */
+
+            /* Bangladesh Grading Colors */
+            --grade-a-plus: #27ae60; /* Emerald */
+            --grade-a: #2ecc71;     /* Nephritis */
+            --grade-a-minus: #3498db; /* Peter River */
+            --grade-b: #f39c12;     /* Orange */
+            --grade-c: #e67e22;     /* Carrot */
+            --grade-d: #9b59b6;     /* Amethyst */
+            --grade-f: #e74c3c;     /* Alizarin */
         }
 
         body {
@@ -306,6 +315,7 @@
             max-width: 400px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             animation: fadeIn 0.3s ease-out;
+            position: relative; /* For close button positioning */
         }
 
         .modal-content h3 {
@@ -324,7 +334,13 @@
             font-size: 1em;
         }
 
-        .modal-content button {
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -332,20 +348,36 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            margin-right: 10px;
             transition: background-color 0.2s ease;
         }
 
-        .modal-content button:hover {
+        .modal-buttons button:hover {
             background-color: #2980b9;
         }
 
-        .modal-content button:last-child {
+        .modal-buttons button.cancel-btn {
             background-color: var(--danger-color);
         }
 
-        .modal-content button:last-child:hover {
+        .modal-buttons button.cancel-btn:hover {
             background-color: #c0392b;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--dark-color);
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .close-modal-btn:hover {
+            opacity: 1;
         }
 
         @keyframes fadeIn {
@@ -391,34 +423,38 @@
     <div class="container">
         <div class="header-section">
             <div class="institution-wrapper">
-                <h2 id="institution-name">Institution Name</h2>
+                <h2 id="institution-name">Onushilon Coaching Centre</h2>
                 <button id="edit-institution" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
             </div>
             <div class="title-wrapper">
-                <h2 id="table-title">Grading Table</h2>
+                <h2 id="table-title">2nd Year Grading Table</h2>
                 <button id="edit-title" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
             </div>
+            <!-- NEW: Button to manage subjects later -->
+            <button id="manage-subjects-btn" class="edit-btn"><i class="fas fa-book"></i> Manage Subjects</button>
         </div>
 
-        <!-- NEW SECTION: Subject Definition Form -->
-        <div id="subject-setup-section" class="form-section">
+        <!-- Initial Subject Definition Section (hidden after first setup) -->
+        <div id="initial-subject-setup-section" class="form-section">
             <h2>Define Subjects</h2>
-            <form id="subject-definition-form" class="flexible-form">
-                <input type="text" id="subject-name" placeholder="Enter subject name (e.g., Math)" required>
-                <input type="number" id="subject-max-marks" placeholder="Max marks (e.g., 100)" required min="1">
-                <button type="button" id="add-subject-btn"><i class="fas fa-plus"></i> Add Subject</button>
+            <form id="subject-definition-form-initial" class="flexible-form">
+                <input type="text" id="subject-name-initial" placeholder="Enter subject name (e.g., Math)" required>
+                <input type="number" id="subject-max-marks-initial" placeholder="Max marks (e.g., 100)" required min="1">
+                <button type="button" id="add-subject-btn-initial"><i class="fas fa-plus"></i> Add Subject</button>
             </form>
-            <div class="error" id="subject-error-message"></div>
-            <div id="subject-list-display">
+            <div class="error" id="subject-error-message-initial"></div>
+            <div id="subject-list-display-initial">
                 <!-- Dynamically added subjects will appear here -->
             </div>
             <button type="button" id="start-grading-btn" style="margin-top: 20px;"><i class="fas fa-play-circle"></i> Start Grading</button>
         </div>
 
-        <!-- MODIFIED: Student Grading Form (initially hidden) -->
+
+        <!-- MODIFIED: Student Grading Form -->
         <form id="grading-form" style="display: none;" class="form-section flexible-form">
             <h2>Add Student Marks</h2>
-            <input type="text" id="student-name" placeholder="Student name" required>
+            <input type="text" id="student-name" placeholder="Student name" list="student-names-datalist" required>
+            <datalist id="student-names-datalist"></datalist>
             <div id="subject-marks-inputs">
                 <!-- Subject mark inputs will be added here dynamically by JS -->
             </div>
@@ -440,22 +476,48 @@
         </table>
     </div>
 
-    <!-- Modals for Institution/Title Edit -->
+    <!-- Modals -->
     <div id="institutionModal" class="modal">
         <div class="modal-content">
+            <button class="close-modal-btn">×</button>
             <h3>Edit Institution Name</h3>
             <input type="text" id="newInstitutionName" placeholder="New Institution Name">
-            <button id="saveInstitutionBtn">Save</button>
-            <button id="cancelInstitutionBtn">Cancel</button>
+            <div class="modal-buttons">
+                <button id="saveInstitutionBtn">Save</button>
+                <button id="cancelInstitutionBtn" class="cancel-btn">Cancel</button>
+            </div>
         </div>
     </div>
 
     <div id="titleModal" class="modal">
         <div class="modal-content">
+            <button class="close-modal-btn">×</button>
             <h3>Edit Table Title</h3>
             <input type="text" id="newTableTitle" placeholder="New Table Title">
-            <button id="saveTitleBtn">Save</button>
-            <button id="cancelTitleBtn">Cancel</button>
+            <div class="modal-buttons">
+                <button id="saveTitleBtn">Save</button>
+                <button id="cancelTitleBtn" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Subject Management Modal -->
+    <div id="subjectManagementModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">×</button>
+            <h3>Manage Subjects</h3>
+            <form id="subject-definition-form-modal" class="flexible-form">
+                <input type="text" id="subject-name-modal" placeholder="Enter subject name (e.g., Physics)" required>
+                <input type="number" id="subject-max-marks-modal" placeholder="Max marks (e.g., 75)" required min="1">
+                <button type="button" id="add-subject-btn-modal"><i class="fas fa-plus"></i> Add Subject</button>
+            </form>
+            <div class="error" id="subject-error-message-modal"></div>
+            <div id="subject-list-display-modal">
+                <!-- Dynamically added subjects will appear here -->
+            </div>
+            <div class="modal-buttons" style="margin-top: 20px;">
+                <button id="close-subject-modal-btn">Done</button>
+            </div>
         </div>
     </div>
 
@@ -463,10 +525,11 @@
         // Global variables for data
         let availableSubjects = [];
         let students = [];
-        let institutionName = "Institution Name";
-        let tableTitle = "Student Grades";
+        let institutionName = "Onushilon Coaching Centre";
+        let tableTitle = "2nd Year Grading Table";
+        let studentSerialCounter = 100; // Starting ID for students
 
-        // Element References
+        // Element References - General
         const institutionNameEl = document.getElementById('institution-name');
         const editInstitutionBtn = document.getElementById('edit-institution');
         const institutionModal = document.getElementById('institutionModal');
@@ -481,19 +544,32 @@
         const saveTitleBtn = document.getElementById('saveTitleBtn');
         const cancelTitleBtn = document.getElementById('cancelTitleBtn');
 
-        // New Subject Setup Elements
-        const subjectSetupSection = document.getElementById('subject-setup-section');
-        const subjectDefinitionForm = document.getElementById('subject-definition-form');
-        const subjectNameInput = document.getElementById('subject-name');
-        const subjectMaxMarksInput = document.getElementById('subject-max-marks');
-        const addSubjectBtn = document.getElementById('add-subject-btn');
-        const subjectListDisplay = document.getElementById('subject-list-display');
-        const subjectErrorMessage = document.getElementById('subject-error-message');
+        // Initial Subject Setup Elements
+        const initialSubjectSetupSection = document.getElementById('initial-subject-setup-section');
+        const subjectDefinitionFormInitial = document.getElementById('subject-definition-form-initial');
+        const subjectNameInputInitial = document.getElementById('subject-name-initial');
+        const subjectMaxMarksInputInitial = document.getElementById('subject-max-marks-initial');
+        const addSubjectBtnInitial = document.getElementById('add-subject-btn-initial');
+        const subjectListDisplayInitial = document.getElementById('subject-list-display-initial');
+        const subjectErrorMessageInitial = document.getElementById('subject-error-message-initial');
         const startGradingBtn = document.getElementById('start-grading-btn');
+
+        // Subject Management Modal Elements
+        const manageSubjectsBtn = document.getElementById('manage-subjects-btn');
+        const subjectManagementModal = document.getElementById('subjectManagementModal');
+        const subjectDefinitionFormModal = document.getElementById('subject-definition-form-modal');
+        const subjectNameInputModal = document.getElementById('subject-name-modal');
+        const subjectMaxMarksInputModal = document.getElementById('subject-max-marks-modal');
+        const addSubjectBtnModal = document.getElementById('add-subject-btn-modal');
+        const subjectListDisplayModal = document.getElementById('subject-list-display-modal');
+        const subjectErrorMessageModal = document.getElementById('subject-error-message-modal');
+        const closeSubjectModalBtn = document.getElementById('close-subject-modal-btn');
+
 
         // Student Grading Form Elements
         const gradingForm = document.getElementById('grading-form');
         const studentNameInput = document.getElementById('student-name');
+        const studentNamesDatalist = document.getElementById('student-names-datalist');
         const subjectMarksInputsDiv = document.getElementById('subject-marks-inputs');
         const errorMessageDiv = document.getElementById('error-message');
 
@@ -515,14 +591,21 @@
             return name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now();
         }
 
-        // Grade calculation logic (reused and slightly adapted for percentage)
+        // Bangladesh Grading Scale
         function getGradeInfo(percentage) {
-            if (percentage >= 90) return { grade: 'A+', color: '#27ae60' }; // Emerald
-            if (percentage >= 80) return { grade: 'A', color: '#2ecc71' };  // Nephritis
-            if (percentage >= 70) return { grade: 'B', color: '#3498db' };  // Peter River
-            if (percentage >= 60) return { grade: 'C', color: '#f39c12' };  // Orange
-            if (percentage >= 50) return { grade: 'D', color: '#e67e22' };  // Carrot
-            return { grade: 'F', color: '#e74c3c' };                      // Alizarin
+            let grade = 'F';
+            let gradePoint = 0.00;
+            let color = 'var(--grade-f)';
+
+            if (percentage >= 80) { grade = 'A+'; gradePoint = 5.00; color = 'var(--grade-a-plus)'; }
+            else if (percentage >= 70) { grade = 'A'; gradePoint = 4.00; color = 'var(--grade-a)'; }
+            else if (percentage >= 60) { grade = 'A-'; gradePoint = 3.50; color = 'var(--grade-a-minus)'; }
+            else if (percentage >= 50) { grade = 'B'; gradePoint = 3.00; color = 'var(--grade-b)'; }
+            else if (percentage >= 40) { grade = 'C'; gradePoint = 2.00; color = 'var(--grade-c)'; }
+            else if (percentage >= 33) { grade = 'D'; gradePoint = 1.00; color = 'var(--grade-d)'; }
+            // else if (percentage >= 0) { grade = 'F'; gradePoint = 0.00; color = 'var(--grade-f)'; } // Already default
+
+            return { grade: grade, gradePoint: gradePoint, color: color };
         }
 
         // --- Persistence (localStorage) ---
@@ -531,13 +614,15 @@
             localStorage.setItem('tableTitle', tableTitle);
             localStorage.setItem('availableSubjects', JSON.stringify(availableSubjects));
             localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('studentSerialCounter', studentSerialCounter);
         }
 
         function loadData() {
-            institutionName = localStorage.getItem('institutionName') || "Institution Name";
-            tableTitle = localStorage.getItem('tableTitle') || "Student Grades";
+            institutionName = localStorage.getItem('institutionName') || "Onushilon Coaching Centre";
+            tableTitle = localStorage.getItem('tableTitle') || "2nd Year Grading Table";
             const storedSubjects = localStorage.getItem('availableSubjects');
             const storedStudents = localStorage.getItem('students');
+            const storedSerialCounter = localStorage.getItem('studentSerialCounter');
 
             if (storedSubjects) {
                 availableSubjects = JSON.parse(storedSubjects);
@@ -545,17 +630,20 @@
             if (storedStudents) {
                 students = JSON.parse(storedStudents);
             }
+            if (storedSerialCounter) {
+                studentSerialCounter = parseInt(storedSerialCounter);
+            }
             
             institutionNameEl.textContent = institutionName;
             tableTitleEl.textContent = tableTitle;
         }
 
-        // --- Subject Definition Logic ---
+        // --- Subject Definition Logic (Shared for Initial and Modal) ---
 
-        function renderSubjectList() {
-            subjectListDisplay.innerHTML = '';
+        function renderSubjectList(displayElement) {
+            displayElement.innerHTML = '';
             if (availableSubjects.length === 0) {
-                subjectListDisplay.innerHTML = '<p style="text-align: center; color: var(--border-color);">No subjects added yet.</p>';
+                displayElement.innerHTML = '<p style="text-align: center; color: var(--border-color);">No subjects added yet.</p>';
                 return;
             }
             availableSubjects.forEach(subject => {
@@ -565,23 +653,23 @@
                     <span>${subject.name} (Max: ${subject.maxMarks})</span>
                     <button type="button" data-subject-id="${subject.id}"><i class="fas fa-trash-alt"></i> Remove</button>
                 `;
-                subjectListDisplay.appendChild(subjectItem);
+                displayElement.appendChild(subjectItem);
             });
         }
 
-        addSubjectBtn.addEventListener('click', () => {
-            const name = subjectNameInput.value.trim();
-            const maxMarks = parseInt(subjectMaxMarksInput.value);
+        function addSubject(nameInput, maxMarksInput, errorMessageElement, displayElement) {
+            const name = nameInput.value.trim();
+            const maxMarks = parseInt(maxMarksInput.value);
 
-            subjectErrorMessage.textContent = ''; // Clear previous errors
+            errorMessageElement.textContent = ''; // Clear previous errors
 
             if (!name || isNaN(maxMarks) || maxMarks <= 0) {
-                subjectErrorMessage.textContent = 'Please enter a valid subject name and positive max marks.';
+                errorMessageElement.textContent = 'Please enter a valid subject name and positive max marks.';
                 return;
             }
 
             if (availableSubjects.some(subj => subj.name.toLowerCase() === name.toLowerCase())) {
-                subjectErrorMessage.textContent = `Subject "${name}" already exists.`;
+                errorMessageElement.textContent = `Subject "${name}" already exists.`;
                 return;
             }
 
@@ -592,46 +680,60 @@
             };
 
             availableSubjects.push(newSubject);
-            renderSubjectList();
+            renderSubjectList(displayElement);
             saveData();
 
-            subjectNameInput.value = '';
-            subjectMaxMarksInput.value = '';
-            subjectNameInput.focus();
-        });
+            nameInput.value = '';
+            maxMarksInput.value = '';
+            nameInput.focus();
 
-        subjectListDisplay.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON' && event.target.dataset.subjectId) {
-                const subjectIdToRemove = event.target.dataset.subjectId;
+            // After adding a subject, update forms/table if grading has started
+            if (gradingForm.style.display !== 'none') {
+                renderStudentSubjectInputs();
+                updateTableHeader();
+                updateTable();
+            }
+        }
 
-                if (!confirm("Are you sure you want to remove this subject? This will also remove its marks from all existing students.")) {
-                    return;
+        function removeSubject(subjectIdToRemove) {
+            if (!confirm("Are you sure you want to remove this subject? This will also remove its marks from all existing students.")) {
+                return;
+            }
+
+            // Remove subject from availableSubjects
+            availableSubjects = availableSubjects.filter(subj => subj.id !== subjectIdToRemove);
+
+            // Remove this subject's marks from all students
+            students.forEach(student => {
+                if (student.subjectMarks && student.subjectMarks[subjectIdToRemove] !== undefined) {
+                    delete student.subjectMarks[subjectIdToRemove];
                 }
+                calculateStudentGrades(student); // Recalculate overall grades
+            });
 
-                // Remove subject from availableSubjects
-                availableSubjects = availableSubjects.filter(subj => subj.id !== subjectIdToRemove);
+            renderSubjectList(subjectListDisplayInitial); // Update initial setup view
+            renderSubjectList(subjectListDisplayModal);   // Update modal view
+            updateTableHeader(); // Update headers as a subject is removed
+            updateTable();       // Re-render table to reflect changes
+            saveData();
+        }
 
-                // Remove this subject's marks from all students
-                students.forEach(student => {
-                    if (student.subjectMarks && student.subjectMarks[subjectIdToRemove] !== undefined) {
-                        delete student.subjectMarks[subjectIdToRemove];
-                    }
-                    calculateStudentGrades(student); // Recalculate overall grades
-                });
-
-                renderSubjectList();
-                updateTableHeader(); // Update headers as a subject is removed
-                updateTable();       // Re-render table to reflect changes
-                saveData();
+        // Event Listeners for Initial Subject Setup
+        addSubjectBtnInitial.addEventListener('click', () => {
+            addSubject(subjectNameInputInitial, subjectMaxMarksInputInitial, subjectErrorMessageInitial, subjectListDisplayInitial);
+        });
+        subjectListDisplayInitial.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON' && event.target.dataset.subjectId) {
+                removeSubject(event.target.dataset.subjectId);
             }
         });
 
         startGradingBtn.addEventListener('click', () => {
             if (availableSubjects.length === 0) {
-                subjectErrorMessage.textContent = 'Please define at least one subject before starting.';
+                subjectErrorMessageInitial.textContent = 'Please define at least one subject before starting.';
                 return;
             }
-            subjectSetupSection.style.display = 'none';
+            initialSubjectSetupSection.style.display = 'none';
             gradingForm.style.display = 'flex'; // Use flex for form layout
             downloadPdfBtn.style.display = 'block';
             renderStudentSubjectInputs();
@@ -641,7 +743,39 @@
             studentNameInput.focus();
         });
 
+        // Event Listeners for Subject Management Modal
+        manageSubjectsBtn.addEventListener('click', () => {
+            openModal(subjectManagementModal);
+            renderSubjectList(subjectListDisplayModal);
+            subjectNameInputModal.value = '';
+            subjectMaxMarksInputModal.value = '';
+            subjectNameInputModal.focus();
+        });
+
+        addSubjectBtnModal.addEventListener('click', () => {
+            addSubject(subjectNameInputModal, subjectMaxMarksInputModal, subjectErrorMessageModal, subjectListDisplayModal);
+        });
+        subjectListDisplayModal.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON' && event.target.dataset.subjectId) {
+                removeSubject(event.target.dataset.subjectId);
+            }
+        });
+        closeSubjectModalBtn.addEventListener('click', () => {
+            closeModal(subjectManagementModal);
+        });
+
+
         // --- Student Grading Form Logic ---
+
+        function populateStudentNameDatalist() {
+            studentNamesDatalist.innerHTML = '';
+            const uniqueNames = new Set(students.map(s => s.name));
+            uniqueNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                studentNamesDatalist.appendChild(option);
+            });
+        }
 
         function renderStudentSubjectInputs() {
             subjectMarksInputsDiv.innerHTML = '';
@@ -672,6 +806,11 @@
             let allMarksValid = true;
 
             const subjectInputs = subjectMarksInputsDiv.querySelectorAll('input[type="number"]');
+            if (subjectInputs.length === 0) {
+                 errorMessageDiv.textContent = 'Please define at least one subject first.';
+                 allMarksValid = false;
+            }
+
             subjectInputs.forEach(input => {
                 const subjectId = input.dataset.subjectId;
                 const mark = parseFloat(input.value);
@@ -690,7 +829,7 @@
             }
 
             const newStudent = {
-                id: Date.now(),
+                id: `Onu14_${studentSerialCounter++}`, // Generate unique student ID
                 name: capitalize(name),
                 subjectMarks: collectedSubjectMarks,
                 overallGradeInfo: {}, // Will be calculated
@@ -700,12 +839,13 @@
             calculateStudentGrades(newStudent); // Calculate overall grades
             students.push(newStudent);
             updateTable();
-            saveData();
+            saveData(); // Save new student and updated counter
 
             // Clear form
             studentNameInput.value = '';
             subjectInputs.forEach(input => input.value = '');
             studentNameInput.focus();
+            populateStudentNameDatalist(); // Update datalist with new student
         });
 
         // --- Grading Logic ---
@@ -732,7 +872,7 @@
         function updateTableHeader() {
             tableHeaderRow.innerHTML = '';
             // Fixed headers
-            ['Serial', 'Name'].forEach(header => {
+            ['Serial', 'Student ID', 'Name'].forEach(header => {
                 const th = document.createElement('th');
                 th.textContent = header;
                 tableHeaderRow.appendChild(th);
@@ -764,7 +904,7 @@
             if (students.length === 0) {
                 const row = gradingTableBody.insertRow();
                 const cell = row.insertCell();
-                cell.colSpan = 2 + availableSubjects.length + 2; // Serial + Name + Subjects + Total + Grade
+                cell.colSpan = 3 + availableSubjects.length + 2; // Serial + ID + Name + Subjects + Total + Grade
                 cell.textContent = 'No student data available. Add a student above!';
                 cell.style.textAlign = 'center';
                 cell.style.padding = '20px';
@@ -778,6 +918,10 @@
                 // Serial Number
                 const serialCell = row.insertCell();
                 serialCell.textContent = index + 1;
+
+                // Student ID
+                const idCell = row.insertCell();
+                idCell.textContent = student.id;
 
                 // Student Name (editable)
                 const nameCell = row.insertCell();
@@ -805,9 +949,12 @@
                 const gradeSpan = document.createElement('b');
                 gradeSpan.textContent = student.overallGradeInfo.grade;
                 gradeSpan.dataset.gradeColor = student.overallGradeInfo.color;
-                gradeSpan.style.setProperty('--grade-color', student.overallGradeInfo.color);
+                // Get the actual CSS variable value
+                const gradeColor = getComputedStyle(document.documentElement).getPropertyValue(student.overallGradeInfo.color);
+                gradeSpan.style.setProperty('--grade-color', gradeColor || student.overallGradeInfo.color); // Fallback to raw value if CSS var fails
                 overallGradeCell.appendChild(gradeSpan);
             });
+            populateStudentNameDatalist(); // Ensure datalist is updated after table render
         }
 
         // --- Inline Editing ---
@@ -815,7 +962,7 @@
         gradingTableBody.addEventListener('blur', (event) => {
             const targetCell = event.target;
             if (targetCell.classList.contains('editable')) {
-                const studentId = parseInt(targetCell.closest('tr').dataset.studentId);
+                const studentId = targetCell.closest('tr').dataset.studentId; // Student ID is now a string
                 const student = students.find(s => s.id === studentId);
 
                 if (!student) return;
@@ -900,10 +1047,10 @@
             yPos += 10;
 
             // Prepare table data for autoTable
-            const head = [['Serial', 'Name', ...availableSubjects.map(s => `${s.name} (${s.maxMarks})`), 'Total Marks', 'Overall Grade']];
+            const head = [['Serial', 'Student ID', 'Name', ...availableSubjects.map(s => `${s.name} (${s.maxMarks})`), 'Total Marks', 'Overall Grade']];
 
             const body = students.map((student, index) => {
-                const row = [index + 1, student.name];
+                const row = [index + 1, student.id, student.name];
                 availableSubjects.forEach(subject => {
                     row.push(student.subjectMarks[subject.id] !== undefined ? student.subjectMarks[subject.id] : 'N/A');
                 });
@@ -918,8 +1065,8 @@
                 body: body,
                 theme: 'striped', // 'striped', 'grid', 'plain'
                 styles: {
-                    fontSize: 10,
-                    cellPadding: 3,
+                    fontSize: 9, // Slightly smaller font for more columns
+                    cellPadding: 2,
                     halign: 'center', // Center align content by default
                     valign: 'middle'
                 },
@@ -932,22 +1079,24 @@
                     textColor: [51, 51, 51],
                 },
                 columnStyles: {
-                    0: { halign: 'center', cellWidth: 15 }, // Serial
-                    1: { halign: 'left', cellWidth: 40 },  // Name
-                    // Dynamic subject columns start from index 2
-                    // You might want to adjust width based on number of subjects
-                    // Example for first subject: 2: { cellWidth: 25 }
-                    // ...
-                    // Last two columns are Total Marks and Overall Grade
-                    [2 + availableSubjects.length]: { halign: 'center', cellWidth: 25 }, // Total Marks
-                    [2 + availableSubjects.length + 1]: { halign: 'center', cellWidth: 25 } // Overall Grade
+                    0: { halign: 'center', cellWidth: 10 }, // Serial
+                    1: { halign: 'center', cellWidth: 25 }, // Student ID
+                    2: { halign: 'left', cellWidth: 40 },  // Name
+                    // Dynamic subject columns start from index 3
+                    // Auto-adjust width for subject columns to fill space
+                    // e.g., 'auto' or calculated based on remaining space
+                    [3 + availableSubjects.length]: { halign: 'center', cellWidth: 25 }, // Total Marks
+                    [3 + availableSubjects.length + 1]: { halign: 'center', cellWidth: 25 } // Overall Grade
                 },
                 didDrawCell: (data) => {
-                    // Example: color grade cells in PDF (similar to HTML)
-                    if (data.section === 'body' && data.column.index === (2 + availableSubjects.length + 1)) {
+                    // Apply color to the Overall Grade cell based on its grade
+                    if (data.section === 'body' && data.column.index === (3 + availableSubjects.length + 1)) {
                         const student = students[data.row.index];
                         if (student && student.overallGradeInfo && student.overallGradeInfo.color) {
-                            doc.setTextColor(student.overallGradeInfo.color);
+                            // Get computed CSS color value (e.g., #27ae60 from var(--grade-a-plus))
+                            const gradeColor = getComputedStyle(document.documentElement).getPropertyValue(student.overallGradeInfo.color);
+                            // Set text color for this specific cell
+                            doc.setTextColor(gradeColor || student.overallGradeInfo.color);
                             doc.text(data.cell.text, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center', baseline: 'middle' });
                         }
                     }
@@ -964,17 +1113,23 @@
         }
 
         // --- Institution/Title Modals ---
-        function openModal(modal, input, currentText) {
+        function openModal(modal) {
             modal.style.display = 'flex';
-            input.value = currentText;
-            input.focus();
+            // Set input value if it's an edit modal
+            if (modal.id === 'institutionModal') {
+                newInstitutionNameInput.value = institutionNameEl.textContent;
+                newInstitutionNameInput.focus();
+            } else if (modal.id === 'titleModal') {
+                newTableTitleInput.value = tableTitleEl.textContent;
+                newTableTitleInput.focus();
+            }
         }
 
         function closeModal(modal) {
             modal.style.display = 'none';
         }
 
-        editInstitutionBtn.addEventListener('click', () => openModal(institutionModal, newInstitutionNameInput, institutionNameEl.textContent));
+        editInstitutionBtn.addEventListener('click', () => openModal(institutionModal));
         saveInstitutionBtn.addEventListener('click', () => {
             const newName = newInstitutionNameInput.value.trim();
             if (newName) {
@@ -986,7 +1141,7 @@
         });
         cancelInstitutionBtn.addEventListener('click', () => closeModal(institutionModal));
 
-        editTitleBtn.addEventListener('click', () => openModal(titleModal, newTableTitleInput, tableTitleEl.textContent));
+        editTitleBtn.addEventListener('click', () => openModal(titleModal));
         saveTitleBtn.addEventListener('click', () => {
             const newTitle = newTableTitleInput.value.trim();
             if (newTitle) {
@@ -998,28 +1153,39 @@
         });
         cancelTitleBtn.addEventListener('click', () => closeModal(titleModal));
 
+        // Close modals on close button click
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                closeModal(event.target.closest('.modal'));
+            });
+        });
+
         // Close modals on outside click
         window.addEventListener('click', (event) => {
             if (event.target === institutionModal) closeModal(institutionModal);
             if (event.target === titleModal) closeModal(titleModal);
+            if (event.target === subjectManagementModal) closeModal(subjectManagementModal);
         });
 
         // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
+
+            // Determine if subjects have been defined before
             if (availableSubjects.length > 0) {
-                subjectSetupSection.style.display = 'none';
+                initialSubjectSetupSection.style.display = 'none';
                 gradingForm.style.display = 'flex';
                 downloadPdfBtn.style.display = 'block';
                 renderStudentSubjectInputs(); // Render subject inputs for the grading form
                 updateTableHeader(); // Build table headers based on loaded subjects
                 updateTable(); // Populate table with loaded students
             } else {
-                renderSubjectList(); // Show empty subject list display
-                subjectSetupSection.style.display = 'block';
+                renderSubjectList(subjectListDisplayInitial); // Show empty subject list display
+                initialSubjectSetupSection.style.display = 'block';
                 gradingForm.style.display = 'none';
                 downloadPdfBtn.style.display = 'none';
             }
+            populateStudentNameDatalist(); // Populate datalist on load
         });
     </script>
 </body>
