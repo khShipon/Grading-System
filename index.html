@@ -3,370 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grading System with PDF Download</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Multi-Subject Grading System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* General Styles */
         :root {
-            --primary-color: #4a90e2; /* Blue */
-            --secondary-color: #f4f7f6; /* Light grey background */
-            --accent-color: #50e3c2;  /* Teal accent */
-            --success-color: #7ed321; /* Green */
-            --warning-color: #f5a623; /* Orange */
-            --danger-color: #d0021b;  /* Red */
-            --light-color: #ffffff;  /* White */
-            --dark-color: #4a4a4a;   /* Dark Grey text */
-            --border-color: #e1e1e1; /* Lighter border */
-            --header-bg: #f8f9fa;   /* Light bg for table header */
-            --hover-bg: #e9ecef;    /* Subtle hover */
-            --text-muted: #8c8c8c; /* Muted text color */
+            --primary-color: #3498db;
+            --secondary-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --light-color: #ffffff;
+            --border-color: #bdc3c7;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --text-color: #333;
+            --highlight-color: #f0f8ff; /* AliceBlue */
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background: var(--secondary-color);
-            color: var(--dark-color);
+            background-color: #f4f7f6;
+            color: var(--text-color);
             line-height: 1.6;
         }
 
         h1 {
             text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        h2 {
-            font-weight: 500;
             color: var(--dark-color);
-            margin: 5px 0; /* Reduced margin for h2 */
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            letter-spacing: 1px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 30px auto;
-            background: var(--light-color);
-            border: 1px solid var(--border-color);
-            padding: 35px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--light-color);
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* Header Section (Institution/Title) */
         .header-section {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
 
         .institution-wrapper, .title-wrapper {
-            display: flex; /* Use flex for better alignment */
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            position: relative;
-            margin-bottom: 10px; /* Space between title/institution if they wrap */
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            margin-bottom: 10px; /* For smaller screens */
+        }
+
+        .header-section h2 {
+            margin: 0 10px 0 0;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         .edit-btn {
-            padding: 6px 14px;
-            background: var(--hover-bg);
-            color: var(--dark-color);
-            border: 1px solid var(--border-color);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            display: inline-flex; /* Use inline-flex */
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+            display: flex;
             align-items: center;
-            gap: 5px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .edit-btn:hover {
-            background: #dce1e4;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background-color: #2980b9;
         }
 
-        form {
-            margin-bottom: 25px;
+        .edit-btn i {
+            margin-right: 5px;
+        }
+
+        /* Forms Styling */
+        .form-section {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px; /* Space between sections */
+        }
+
+        .form-section h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .flexible-form {
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping */
+            flex-wrap: wrap;
             gap: 10px;
             align-items: center;
         }
 
-        #grading-form {
-            background-color: var(--secondary-color);
-            padding: 15px;
-            border-radius: 8px;
+        .flexible-form input[type="text"],
+        .flexible-form input[type="number"] {
+            flex-grow: 1;
+            min-width: 150px;
+            padding: 10px 15px;
             border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width calculation */
         }
 
-        input[type="text"],
-        input[type="number"] {
-            flex-grow: 1; /* Allow inputs to grow */
-            min-width: 150px; /* Minimum width */
-            padding: 12px 15px;
-            font-size: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
-            outline: none;
-        }
-
-        button {
-            padding: 12px 20px;
-            font-size: 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background-color: var(--primary-color);
+        .flexible-form button[type="submit"],
+        .flexible-form button[type="button"] {
+            background-color: var(--success-color);
             color: white;
-            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
-            font-weight: 500;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        button:hover {
-            background-color: #3a7bc8; /* Darker blue */
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-        }
-        button:active {
-             transform: scale(0.98);
-             box-shadow: 0 2px 5px rgba(74, 144, 226, 0.2);
-         }
-
-        /* Specific Button Styles */
-        #download-pdf {
-             background-color: var(--accent-color);
-             color: var(--dark-color);
-             margin-top: 15px; /* Add some space above */
-        }
-        #download-pdf:hover {
-             background-color: #40c3a2; /* Darker teal */
-             box-shadow: 0 4px 10px rgba(80, 227, 194, 0.3);
-        }
-         #download-pdf:active {
-             transform: scale(0.98);
-             box-shadow: 0 2px 5px rgba(80, 227, 194, 0.2);
-         }
-
-        .error {
-            color: var(--danger-color);
-            font-size: 14px;
-            margin-top: 5px;
-            width: 100%; /* Take full width in form */
-            min-height: 20px; /* Reserve space */
-            font-weight: 500;
-            padding-left: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-            border-radius: 8px;
-            overflow: hidden; /* Important for rounded corners on table */
-        }
-
-        th, td {
-            padding: 14px 18px;
             border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+
+        .flexible-form button[type="submit"]:hover,
+        .flexible-form button[type="button"]:hover {
+            background-color: #229a54;
+        }
+
+        #start-grading-btn {
+            background-color: var(--primary-color);
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #start-grading-btn:hover {
+            background-color: #2980b9;
+        }
+
+        #subject-marks-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px; /* Space between subject inputs and add student button */
+        }
+
+        /* Subject List Display */
+        #subject-list-display {
+            margin-top: 20px;
+            padding: 10px 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            background-color: var(--light-color);
+            min-height: 50px; /* Give it some visual space */
+        }
+
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
             border-bottom: 1px solid var(--border-color);
-            text-align: left; /* Default left align */
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: var(--header-bg);
             color: var(--dark-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            border-bottom-width: 2px; /* Thicker border below header */
+            font-weight: 500;
         }
 
-        /* Center specific columns */
-        th:first-child, td:first-child, /* Serial */
-        th:nth-child(3), td:nth-child(3), /* Marks */
-        th:last-child, td:last-child { /* Grade */
-            text-align: center;
-        }
-
-        /* Remove border from last row */
-        tr:last-child td {
+        .subject-item:last-child {
             border-bottom: none;
         }
 
-        /* Zebra striping */
-        tr:nth-child(even) {
+        .subject-item button {
+            padding: 5px 10px;
+            font-size: 13px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .subject-item button:hover {
+            background-color: #c0392b; /* Darker red */
+        }
+
+
+        /* Error Message */
+        .error {
+            color: var(--danger-color);
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            background-color: var(--light-color);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        tbody tr:nth-child(even) {
             background-color: var(--secondary-color);
         }
 
-        /* Row hover effect */
-        tr:hover {
-            background-color: var(--hover-bg);
+        tbody tr:hover {
+            background-color: var(--highlight-color);
         }
 
-        td.editable {
-            cursor: pointer;
-            background-color: transparent; /* Use transparent bg */
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            border-radius: 4px; /* Slight rounding for focus */
-            position: relative; /* For potential pseudo-elements if needed */
+        td[contenteditable="true"] {
+            cursor: text;
+            background-color: #fdfdfd;
+            border: 1px dashed var(--border-color);
         }
 
-        td.editable:hover {
-            background-color: rgba(74, 144, 226, 0.1); /* Subtle blueish hover */
-        }
-
-        td.editable:focus {
+        td[contenteditable="true"]:focus {
+            outline: 2px solid var(--primary-color);
             background-color: white;
-            outline: none; /* Remove default outline */
-            box-shadow: inset 0 0 0 2px var(--primary-color); /* Inset shadow as outline */
-            z-index: 1; /* Ensure focus style is on top */
         }
 
-        /* Style Grade Cell */
-        td b { /* Targeting the bold grade text */
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 15px; /* Pill shape */
-            font-size: 13px;
-            font-weight: 600;
-            color: white; /* Text color for grades */
-            min-width: 40px; /* Ensure minimum width */
-            text-align: center;
+        /* Grade Colors */
+        b[data-grade-color] {
+            color: var(--grade-color);
+            font-weight: bold;
         }
 
-        /* Grade-specific background colors */
-        td[data-grade-color] b {
-             background-color: var(--grade-color, var(--dark-color)); /* Use dynamic color */
+        /* Download PDF Button */
+        #download-pdf {
+            display: block;
+            margin: 25px auto;
+            background-color: var(--info-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
+        #download-pdf:hover {
+            background-color: #2980b9;
+        }
 
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.65); /* Darker overlay */
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal.show { /* Class to show modal with transition */
-            display: flex;
-            opacity: 1;
         }
 
         .modal-content {
-            background: white;
-            padding: 25px 30px;
+            background-color: var(--light-color);
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
             border-radius: 8px;
             width: 90%;
-            max-width: 450px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-out;
         }
-
-        .modal.show .modal-content {
-            transform: scale(1);
-        }
-
 
         .modal-content h3 {
             margin-top: 0;
-            margin-bottom: 20px;
             color: var(--primary-color);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .modal-content input[type="text"] {
-            width: 100%; /* Full width inside modal */
+        .modal-content input {
+            width: calc(100% - 22px);
+            padding: 10px;
             margin-bottom: 15px;
-        }
-
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        .save-btn, .cancel-btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .save-btn {
-            background: var(--primary-color);
-            color: white;
-        }
-        .save-btn:hover {
-             background-color: #3a7bc8;
-             box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
-        }
-
-        .cancel-btn {
-            background: var(--secondary-color);
-            color: var(--dark-color);
             border: 1px solid var(--border-color);
-        }
-        .cancel-btn:hover {
-             background-color: var(--hover-bg);
-        }
-
-        .save-feedback {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--success-color);
-            color: var(--dark-color); /* Or white if contrast is better */
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-top: 10px;
-            animation: fadeInOut 2s ease-in-out;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 5; /* Ensure it's above buttons */
+            border-radius: 5px;
+            font-size: 1em;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translate(-50%, -10px); }
-            15% { opacity: 1; transform: translate(-50%, 0); }
-            85% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -10px); }
+        .modal-content button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #2980b9;
+        }
+
+        .modal-content button:last-child {
+            background-color: var(--danger-color);
+        }
+
+        .modal-content button:last-child:hover {
+            background-color: #c0392b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .institution-wrapper, .title-wrapper {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .header-section h2 {
+                font-size: 1.5em;
+            }
+
+            .flexible-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .flexible-form input,
+            .flexible-form button {
+                width: 100%;
+                min-width: unset;
+            }
+
+            th, td {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -376,429 +392,635 @@
         <div class="header-section">
             <div class="institution-wrapper">
                 <h2 id="institution-name">Institution Name</h2>
-                <button id="edit-institution" class="edit-btn">Edit</button>
+                <button id="edit-institution" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
             </div>
             <div class="title-wrapper">
                 <h2 id="table-title">Grading Table</h2>
-                <button id="edit-title" class="edit-btn">Edit</button>
+                <button id="edit-title" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
             </div>
         </div>
 
-        <form id="total-marks-form">
-            <input type="number" id="total-marks" placeholder="Enter total marks (e.g., 100)" required step="any">
-            <button type="button" id="set-total-marks">Set Total Marks</button>
-        </form>
+        <!-- NEW SECTION: Subject Definition Form -->
+        <div id="subject-setup-section" class="form-section">
+            <h2>Define Subjects</h2>
+            <form id="subject-definition-form" class="flexible-form">
+                <input type="text" id="subject-name" placeholder="Enter subject name (e.g., Math)" required>
+                <input type="number" id="subject-max-marks" placeholder="Max marks (e.g., 100)" required min="1">
+                <button type="button" id="add-subject-btn"><i class="fas fa-plus"></i> Add Subject</button>
+            </form>
+            <div class="error" id="subject-error-message"></div>
+            <div id="subject-list-display">
+                <!-- Dynamically added subjects will appear here -->
+            </div>
+            <button type="button" id="start-grading-btn" style="margin-top: 20px;"><i class="fas fa-play-circle"></i> Start Grading</button>
+        </div>
 
-        <form id="grading-form" style="display: none;">
+        <!-- MODIFIED: Student Grading Form (initially hidden) -->
+        <form id="grading-form" style="display: none;" class="form-section flexible-form">
+            <h2>Add Student Marks</h2>
             <input type="text" id="student-name" placeholder="Student name" required>
-            <input type="number" id="student-marks" placeholder="Marks obtained (e.g., 85.5)" required step="any">
-            <button type="submit">Add Student</button>
+            <div id="subject-marks-inputs">
+                <!-- Subject mark inputs will be added here dynamically by JS -->
+            </div>
+            <button type="submit"><i class="fas fa-user-plus"></i> Add Student</button>
             <div class="error" id="error-message"></div>
         </form>
 
-        <button id="download-pdf" style="display: none;">Download Table as PDF</button>
+        <button id="download-pdf" style="display: none;"><i class="fas fa-file-pdf"></i> Download Table as PDF</button>
 
         <table>
             <thead>
-                <tr>
-                    <th>Serial</th>
-                    <th>Name</th>
-                    <th>Marks</th>
-                    <th>Grade</th>
+                <tr id="table-header-row">
+                    <!-- Dynamic headers will be inserted by JS -->
                 </tr>
             </thead>
             <tbody id="grading-table">
-                <!-- Table rows will be added dynamically -->
+                <!-- Table rows will be added dynamically by JS -->
             </tbody>
         </table>
     </div>
 
-    <!-- Modals for editing institution and title -->
-    <div id="institution-modal" class="modal">
+    <!-- Modals for Institution/Title Edit -->
+    <div id="institutionModal" class="modal">
         <div class="modal-content">
             <h3>Edit Institution Name</h3>
-            <form id="institution-form">
-                <input type="text" id="institution-input" placeholder="Enter institution name" required>
-                <div class="modal-buttons">
-                    <button type="button" class="cancel-btn" id="cancel-institution">Cancel</button>
-                    <button type="submit" class="save-btn">Save</button>
-                </div>
-            </form>
+            <input type="text" id="newInstitutionName" placeholder="New Institution Name">
+            <button id="saveInstitutionBtn">Save</button>
+            <button id="cancelInstitutionBtn">Cancel</button>
         </div>
     </div>
 
-    <div id="title-modal" class="modal">
+    <div id="titleModal" class="modal">
         <div class="modal-content">
             <h3>Edit Table Title</h3>
-            <form id="title-form">
-                <input type="text" id="title-input" placeholder="Enter table title" required>
-                <div class="modal-buttons">
-                    <button type="button" class="cancel-btn" id="cancel-title">Cancel</button>
-                    <button type="submit" class="save-btn">Save</button>
-                </div>
-            </form>
+            <input type="text" id="newTableTitle" placeholder="New Table Title">
+            <button id="saveTitleBtn">Save</button>
+            <button id="cancelTitleBtn">Cancel</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Updated jspdf version -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script> <!-- Updated autotable version -->
     <script>
-        const totalMarksForm = document.getElementById('total-marks-form');
+        // Global variables for data
+        let availableSubjects = [];
+        let students = [];
+        let institutionName = "Institution Name";
+        let tableTitle = "Student Grades";
+
+        // Element References
+        const institutionNameEl = document.getElementById('institution-name');
+        const editInstitutionBtn = document.getElementById('edit-institution');
+        const institutionModal = document.getElementById('institutionModal');
+        const newInstitutionNameInput = document.getElementById('newInstitutionName');
+        const saveInstitutionBtn = document.getElementById('saveInstitutionBtn');
+        const cancelInstitutionBtn = document.getElementById('cancelInstitutionBtn');
+
+        const tableTitleEl = document.getElementById('table-title');
+        const editTitleBtn = document.getElementById('edit-title');
+        const titleModal = document.getElementById('titleModal');
+        const newTableTitleInput = document.getElementById('newTableTitle');
+        const saveTitleBtn = document.getElementById('saveTitleBtn');
+        const cancelTitleBtn = document.getElementById('cancelTitleBtn');
+
+        // New Subject Setup Elements
+        const subjectSetupSection = document.getElementById('subject-setup-section');
+        const subjectDefinitionForm = document.getElementById('subject-definition-form');
+        const subjectNameInput = document.getElementById('subject-name');
+        const subjectMaxMarksInput = document.getElementById('subject-max-marks');
+        const addSubjectBtn = document.getElementById('add-subject-btn');
+        const subjectListDisplay = document.getElementById('subject-list-display');
+        const subjectErrorMessage = document.getElementById('subject-error-message');
+        const startGradingBtn = document.getElementById('start-grading-btn');
+
+        // Student Grading Form Elements
         const gradingForm = document.getElementById('grading-form');
-        const gradingTable = document.getElementById('grading-table');
-        const errorMessage = document.getElementById('error-message');
+        const studentNameInput = document.getElementById('student-name');
+        const subjectMarksInputsDiv = document.getElementById('subject-marks-inputs');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        // Table Elements
+        const tableHeaderRow = document.getElementById('table-header-row');
+        const gradingTableBody = document.getElementById('grading-table');
+
+        // PDF Download Button
         const downloadPdfBtn = document.getElementById('download-pdf');
-        const institutionName = document.getElementById('institution-name');
-        const tableTitle = document.getElementById('table-title');
-        const institutionModal = document.getElementById('institution-modal');
-        const titleModal = document.getElementById('title-modal');
 
-        let totalMarks = null;
-        const students = []; // Consider using an object/Map if IDs are needed later
+        // --- Helper Functions ---
 
-        // --- Utility Functions ---
-        function showModal(modalElement) {
-            modalElement.style.display = 'flex';
-            setTimeout(() => modalElement.classList.add('show'), 10); // Add class for transition
+        function capitalize(str) {
+            if (!str) return '';
+            return str.replace(/\b\w/g, char => char.toUpperCase());
         }
 
-        function hideModal(modalElement) {
-            modalElement.classList.remove('show');
-            setTimeout(() => modalElement.style.display = 'none', 300); // Wait for transition
+        function generateUniqueId(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now();
         }
 
-        // --- Load Initial Data ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedInstitutionName = localStorage.getItem('institutionName');
-            institutionName.textContent = savedInstitutionName || 'Institution Name'; // Default text
+        // Grade calculation logic (reused and slightly adapted for percentage)
+        function getGradeInfo(percentage) {
+            if (percentage >= 90) return { grade: 'A+', color: '#27ae60' }; // Emerald
+            if (percentage >= 80) return { grade: 'A', color: '#2ecc71' };  // Nephritis
+            if (percentage >= 70) return { grade: 'B', color: '#3498db' };  // Peter River
+            if (percentage >= 60) return { grade: 'C', color: '#f39c12' };  // Orange
+            if (percentage >= 50) return { grade: 'D', color: '#e67e22' };  // Carrot
+            return { grade: 'F', color: '#e74c3c' };                      // Alizarin
+        }
 
-            const savedTableTitle = localStorage.getItem('tableTitle');
-            tableTitle.textContent = savedTableTitle || 'Grading Table'; // Default text
+        // --- Persistence (localStorage) ---
+        function saveData() {
+            localStorage.setItem('institutionName', institutionName);
+            localStorage.setItem('tableTitle', tableTitle);
+            localStorage.setItem('availableSubjects', JSON.stringify(availableSubjects));
+            localStorage.setItem('students', JSON.stringify(students));
+        }
 
-             // Re-load students if needed (optional, requires saving students to localStorage)
-             // const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
-             // if (savedStudents.length > 0) {
-             //    // Need to re-establish totalMarks if reloading students
-             //    const savedTotalMarks = localStorage.getItem('totalMarks');
-             //    if (savedTotalMarks) {
-             //       totalMarks = parseFloat(savedTotalMarks);
-             //       students.push(...savedStudents);
-             //       totalMarksForm.style.display = 'none';
-             //       gradingForm.style.display = 'flex'; // Use flex as per CSS
-             //       updateTable();
-             //    }
-             // }
-        });
+        function loadData() {
+            institutionName = localStorage.getItem('institutionName') || "Institution Name";
+            tableTitle = localStorage.getItem('tableTitle') || "Student Grades";
+            const storedSubjects = localStorage.getItem('availableSubjects');
+            const storedStudents = localStorage.getItem('students');
 
-        // --- Edit Institution/Title Functionality ---
-        document.getElementById('edit-institution').addEventListener('click', () => {
-            document.getElementById('institution-input').value = institutionName.textContent;
-            showModal(institutionModal);
-            document.getElementById('institution-input').focus();
-        });
-
-        document.getElementById('cancel-institution').addEventListener('click', () => hideModal(institutionModal));
-
-        document.getElementById('institution-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newName = document.getElementById('institution-input').value.trim();
-            if (newName) {
-                institutionName.textContent = newName;
-                localStorage.setItem('institutionName', newName);
-                hideModal(institutionModal);
+            if (storedSubjects) {
+                availableSubjects = JSON.parse(storedSubjects);
             }
-        });
-
-        document.getElementById('edit-title').addEventListener('click', () => {
-            document.getElementById('title-input').value = tableTitle.textContent;
-            showModal(titleModal);
-            document.getElementById('title-input').focus();
-        });
-
-        document.getElementById('cancel-title').addEventListener('click', () => hideModal(titleModal));
-
-        document.getElementById('title-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newTitle = document.getElementById('title-input').value.trim();
-            if (newTitle) {
-                tableTitle.textContent = newTitle;
-                localStorage.setItem('tableTitle', newTitle);
-                hideModal(titleModal);
+            if (storedStudents) {
+                students = JSON.parse(storedStudents);
             }
-        });
+            
+            institutionNameEl.textContent = institutionName;
+            tableTitleEl.textContent = tableTitle;
+        }
 
-        // Close modal if clicking outside the content
-        [institutionModal, titleModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    hideModal(modal);
-                }
+        // --- Subject Definition Logic ---
+
+        function renderSubjectList() {
+            subjectListDisplay.innerHTML = '';
+            if (availableSubjects.length === 0) {
+                subjectListDisplay.innerHTML = '<p style="text-align: center; color: var(--border-color);">No subjects added yet.</p>';
+                return;
+            }
+            availableSubjects.forEach(subject => {
+                const subjectItem = document.createElement('div');
+                subjectItem.classList.add('subject-item');
+                subjectItem.innerHTML = `
+                    <span>${subject.name} (Max: ${subject.maxMarks})</span>
+                    <button type="button" data-subject-id="${subject.id}"><i class="fas fa-trash-alt"></i> Remove</button>
+                `;
+                subjectListDisplay.appendChild(subjectItem);
             });
+        }
+
+        addSubjectBtn.addEventListener('click', () => {
+            const name = subjectNameInput.value.trim();
+            const maxMarks = parseInt(subjectMaxMarksInput.value);
+
+            subjectErrorMessage.textContent = ''; // Clear previous errors
+
+            if (!name || isNaN(maxMarks) || maxMarks <= 0) {
+                subjectErrorMessage.textContent = 'Please enter a valid subject name and positive max marks.';
+                return;
+            }
+
+            if (availableSubjects.some(subj => subj.name.toLowerCase() === name.toLowerCase())) {
+                subjectErrorMessage.textContent = `Subject "${name}" already exists.`;
+                return;
+            }
+
+            const newSubject = {
+                id: generateUniqueId(name),
+                name: capitalize(name),
+                maxMarks: maxMarks
+            };
+
+            availableSubjects.push(newSubject);
+            renderSubjectList();
+            saveData();
+
+            subjectNameInput.value = '';
+            subjectMaxMarksInput.value = '';
+            subjectNameInput.focus();
         });
 
-        // --- Core Grading Logic ---
-        document.getElementById('set-total-marks').addEventListener('click', () => {
-            // ***MODIFIED: Use parseFloat***
-            const inputMarks = parseFloat(document.getElementById('total-marks').value);
-            if (!isNaN(inputMarks) && inputMarks > 0) {
-                totalMarks = inputMarks;
-                // localStorage.setItem('totalMarks', totalMarks); // Optional: save total marks
-                totalMarksForm.style.display = 'none';
-                gradingForm.style.display = 'flex'; // Changed to flex
-                downloadPdfBtn.style.display = 'inline-block'; // Show download button
-                document.getElementById('student-name').focus();
-            } else {
-                 alert('Please enter a valid positive number for total marks.');
-                 document.getElementById('total-marks').focus();
+        subjectListDisplay.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON' && event.target.dataset.subjectId) {
+                const subjectIdToRemove = event.target.dataset.subjectId;
+
+                if (!confirm("Are you sure you want to remove this subject? This will also remove its marks from all existing students.")) {
+                    return;
+                }
+
+                // Remove subject from availableSubjects
+                availableSubjects = availableSubjects.filter(subj => subj.id !== subjectIdToRemove);
+
+                // Remove this subject's marks from all students
+                students.forEach(student => {
+                    if (student.subjectMarks && student.subjectMarks[subjectIdToRemove] !== undefined) {
+                        delete student.subjectMarks[subjectIdToRemove];
+                    }
+                    calculateStudentGrades(student); // Recalculate overall grades
+                });
+
+                renderSubjectList();
+                updateTableHeader(); // Update headers as a subject is removed
+                updateTable();       // Re-render table to reflect changes
+                saveData();
             }
         });
+
+        startGradingBtn.addEventListener('click', () => {
+            if (availableSubjects.length === 0) {
+                subjectErrorMessage.textContent = 'Please define at least one subject before starting.';
+                return;
+            }
+            subjectSetupSection.style.display = 'none';
+            gradingForm.style.display = 'flex'; // Use flex for form layout
+            downloadPdfBtn.style.display = 'block';
+            renderStudentSubjectInputs();
+            updateTableHeader();
+            updateTable(); // Render table with loaded students and new headers
+            saveData();
+            studentNameInput.focus();
+        });
+
+        // --- Student Grading Form Logic ---
+
+        function renderStudentSubjectInputs() {
+            subjectMarksInputsDiv.innerHTML = '';
+            availableSubjects.forEach(subject => {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.placeholder = `Marks for ${subject.name} (Max: ${subject.maxMarks})`;
+                input.required = true;
+                input.min = "0";
+                input.max = subject.maxMarks.toString();
+                input.step = "any";
+                input.dataset.subjectId = subject.id; // Crucial for mapping
+                subjectMarksInputsDiv.appendChild(input);
+            });
+        }
 
         gradingForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            errorMessage.textContent = ''; // Clear previous errors
-            const studentNameInput = document.getElementById('student-name');
-            const studentMarksInput = document.getElementById('student-marks');
+            errorMessageDiv.textContent = ''; // Clear previous errors
 
-            const studentName = studentNameInput.value.trim();
-             // ***MODIFIED: Use parseFloat***
-            const studentMarks = parseFloat(studentMarksInput.value);
-
-            if (!studentName) {
-                errorMessage.textContent = 'Please enter student name.';
-                studentNameInput.focus();
-                return;
-            }
-            if (isNaN(studentMarks) || studentMarks < 0 || studentMarks > totalMarks) {
-                errorMessage.textContent = `Please enter valid marks between 0 and ${totalMarks}.`;
-                studentMarksInput.focus();
+            const name = studentNameInput.value.trim();
+            if (!name) {
+                errorMessageDiv.textContent = 'Student name cannot be empty.';
                 return;
             }
 
-            const student = {
-                id: Date.now(), // Simple unique ID
-                name: capitalizeName(studentName),
-                marks: studentMarks, // Simplified structure
-                gradeInfo: calculateGrade(studentMarks) // Store grade object { grade, color }
+            const collectedSubjectMarks = {};
+            let allMarksValid = true;
+
+            const subjectInputs = subjectMarksInputsDiv.querySelectorAll('input[type="number"]');
+            subjectInputs.forEach(input => {
+                const subjectId = input.dataset.subjectId;
+                const mark = parseFloat(input.value);
+                const subjectMaxMarks = availableSubjects.find(s => s.id === subjectId)?.maxMarks;
+
+                if (isNaN(mark) || mark < 0 || mark > subjectMaxMarks) {
+                    errorMessageDiv.textContent = `Please enter valid marks for ${availableSubjects.find(s=>s.id===subjectId).name} (0 - ${subjectMaxMarks}).`;
+                    allMarksValid = false;
+                    return; // Exit forEach early
+                }
+                collectedSubjectMarks[subjectId] = mark;
+            });
+
+            if (!allMarksValid) {
+                return;
+            }
+
+            const newStudent = {
+                id: Date.now(),
+                name: capitalize(name),
+                subjectMarks: collectedSubjectMarks,
+                overallGradeInfo: {}, // Will be calculated
+                totalObtainedMarks: 0 // Will be calculated
             };
 
-            students.push(student);
-            // localStorage.setItem('students', JSON.stringify(students)); // Optional: save students
+            calculateStudentGrades(newStudent); // Calculate overall grades
+            students.push(newStudent);
             updateTable();
+            saveData();
+
+            // Clear form
             studentNameInput.value = '';
-            studentMarksInput.value = '';
-            studentNameInput.focus(); // Focus back on name for next entry
+            subjectInputs.forEach(input => input.value = '');
+            studentNameInput.focus();
         });
 
-        function calculateGrade(marks) {
-            if (totalMarks === null || totalMarks <= 0) return { grade: 'N/A', color: '#7f8c8d' }; // Handle case where totalMarks isn't set
+        // --- Grading Logic ---
 
-            const percentage = (marks / totalMarks) * 100;
-            // Define grades with colors directly
-            if (percentage >= 80) return { grade: 'A+', color: '#27ae60' }; // Green
-            if (percentage >= 70) return { grade: 'A', color: '#2ecc71' }; // Lighter Green
-            if (percentage >= 60) return { grade: 'A-', color: '#1abc9c' }; // Turquoise
-            if (percentage >= 50) return { grade: 'B', color: '#3498db' }; // Blue
-            if (percentage >= 40) return { grade: 'C', color: '#f39c12' }; // Orange
-            if (percentage >= 33) return { grade: 'D', color: '#e67e22' }; // Darker Orange
-            return { grade: 'F', color: '#e74c3c' }; // Red
+        function calculateStudentGrades(student) {
+            let totalObtainedMarks = 0;
+            let overallMaxMarks = 0;
+
+            availableSubjects.forEach(subject => {
+                const mark = student.subjectMarks[subject.id];
+                if (mark !== undefined && !isNaN(mark)) { // Only count if mark exists and is a number
+                    totalObtainedMarks += mark;
+                    overallMaxMarks += subject.maxMarks;
+                }
+            });
+
+            const overallPercentage = overallMaxMarks > 0 ? (totalObtainedMarks / overallMaxMarks) * 100 : 0;
+            student.totalObtainedMarks = totalObtainedMarks;
+            student.overallGradeInfo = getGradeInfo(overallPercentage);
         }
 
-        function capitalizeName(name) {
-            return name
-                .toLowerCase()
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+        // --- Table Rendering ---
+
+        function updateTableHeader() {
+            tableHeaderRow.innerHTML = '';
+            // Fixed headers
+            ['Serial', 'Name'].forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaderRow.appendChild(th);
+            });
+
+            // Dynamic subject headers
+            availableSubjects.forEach(subject => {
+                const th = document.createElement('th');
+                th.textContent = `${subject.name} (${subject.maxMarks})`;
+                tableHeaderRow.appendChild(th);
+            });
+
+            // Fixed overall headers
+            ['Total Marks', 'Overall Grade'].forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaderRow.appendChild(th);
+            });
         }
 
         function updateTable() {
-            // Sort by marks descending
-            students.sort((a, b) => b.marks - a.marks);
+            // Re-calculate all student grades to ensure data consistency
+            students.forEach(student => calculateStudentGrades(student));
 
-            gradingTable.innerHTML = ''; // Clear existing table rows
+            // Sort students (e.g., by total obtained marks descending)
+            students.sort((a, b) => b.totalObtainedMarks - a.totalObtainedMarks);
+
+            gradingTableBody.innerHTML = '';
+            if (students.length === 0) {
+                const row = gradingTableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 2 + availableSubjects.length + 2; // Serial + Name + Subjects + Total + Grade
+                cell.textContent = 'No student data available. Add a student above!';
+                cell.style.textAlign = 'center';
+                cell.style.padding = '20px';
+                return;
+            }
+
             students.forEach((student, index) => {
-                const row = gradingTable.insertRow();
-                row.dataset.studentId = student.id; // Add ID for easier reference
+                const row = gradingTableBody.insertRow();
+                row.dataset.studentId = student.id; // Store student ID on the row
 
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td contenteditable="true" class="editable name-cell">${student.name}</td>
-                    <td contenteditable="true" class="editable marks-cell">${student.marks}</td>
-                    <td data-grade-color="${student.gradeInfo.color}" style="--grade-color: ${student.gradeInfo.color};"><b>${student.gradeInfo.grade}</b></td>
-                `;
+                // Serial Number
+                const serialCell = row.insertCell();
+                serialCell.textContent = index + 1;
 
-                // Add blur event listeners for inline editing
-                const nameCell = row.querySelector('.name-cell');
-                const marksCell = row.querySelector('.marks-cell');
+                // Student Name (editable)
+                const nameCell = row.insertCell();
+                nameCell.textContent = student.name;
+                nameCell.contentEditable = true;
+                nameCell.classList.add('editable', 'student-name-cell');
 
-                nameCell.addEventListener('blur', handleEdit);
-                marksCell.addEventListener('blur', handleEdit);
-                // Optional: Add keydown listener (Enter/Escape) for better UX
-                nameCell.addEventListener('keydown', handleEditKeydown);
-                marksCell.addEventListener('keydown', handleEditKeydown);
+                // Dynamic Subject Marks (editable)
+                availableSubjects.forEach(subject => {
+                    const markCell = row.insertCell();
+                    const mark = student.subjectMarks[subject.id];
+                    markCell.textContent = mark !== undefined ? mark : 'N/A'; // Handle missing marks
+                    markCell.contentEditable = true;
+                    markCell.classList.add('editable', 'subject-mark-cell');
+                    markCell.dataset.subjectId = subject.id; // Store subject ID on the cell
+                    markCell.dataset.maxMarks = subject.maxMarks; // Store max marks for client-side validation
+                });
+
+                // Total Marks
+                const totalMarksCell = row.insertCell();
+                totalMarksCell.textContent = student.totalObtainedMarks;
+
+                // Overall Grade
+                const overallGradeCell = row.insertCell();
+                const gradeSpan = document.createElement('b');
+                gradeSpan.textContent = student.overallGradeInfo.grade;
+                gradeSpan.dataset.gradeColor = student.overallGradeInfo.color;
+                gradeSpan.style.setProperty('--grade-color', student.overallGradeInfo.color);
+                overallGradeCell.appendChild(gradeSpan);
             });
-
-            updateDownloadButtonVisibility();
         }
 
-         function handleEdit(event) {
-             const cell = event.target;
-             const row = cell.closest('tr');
-             const studentId = Number(row.dataset.studentId);
-             const student = students.find(s => s.id === studentId);
+        // --- Inline Editing ---
 
-             if (!student) return;
-
-             const newValue = cell.textContent.trim();
-
-             if (cell.classList.contains('name-cell')) {
-                 const capitalized = capitalizeName(newValue);
-                 if (newValue && student.name !== capitalized) {
-                     student.name = capitalized;
-                     cell.textContent = capitalized; // Update cell display immediately
-                     // No table re-render needed if only name changes
-                     // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
-                 } else {
-                     cell.textContent = student.name; // Revert if invalid or unchanged
-                 }
-             } else if (cell.classList.contains('marks-cell')) {
-                  // ***MODIFIED: Use parseFloat and Number() which handles decimals***
-                 const newMarks = Number(newValue);
-                 if (!isNaN(newMarks) && newMarks >= 0 && newMarks <= totalMarks) {
-                     if (student.marks !== newMarks) {
-                         student.marks = newMarks;
-                         student.gradeInfo = calculateGrade(newMarks);
-                         // Re-render needed to update sort order and grade display
-                         updateTable();
-                         // localStorage.setItem('students', JSON.stringify(students)); // Optional: save
-                     }
-                     // No need to revert textContent here as updateTable() handles it
-                 } else {
-                      // Revert if invalid - find the cell again after potential re-render
-                      alert(`Please enter valid marks between 0 and ${totalMarks}`);
-                      const potentiallyNewRow = gradingTable.querySelector(`tr[data-student-id="${studentId}"]`);
-                      if (potentiallyNewRow) {
-                         potentiallyNewRow.querySelector('.marks-cell').textContent = student.marks;
-                      }
-                 }
-             }
-         }
-
-        function handleEditKeydown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent newline
-                event.target.blur(); // Trigger the blur event to save
-            } else if (event.key === 'Escape') {
-                event.preventDefault();
-                // Revert changes manually and blur
-                const cell = event.target;
-                const row = cell.closest('tr');
-                const studentId = Number(row.dataset.studentId);
+        gradingTableBody.addEventListener('blur', (event) => {
+            const targetCell = event.target;
+            if (targetCell.classList.contains('editable')) {
+                const studentId = parseInt(targetCell.closest('tr').dataset.studentId);
                 const student = students.find(s => s.id === studentId);
-                if (student) {
-                    if (cell.classList.contains('name-cell')) {
-                        cell.textContent = student.name;
-                    } else if (cell.classList.contains('marks-cell')) {
-                        cell.textContent = student.marks;
+
+                if (!student) return;
+
+                if (targetCell.classList.contains('student-name-cell')) {
+                    const newValue = targetCell.textContent.trim();
+                    if (newValue && newValue !== student.name) {
+                        student.name = capitalize(newValue);
+                        saveData();
+                        updateTable(); // Re-render to ensure sorting reflects name changes if any
+                    } else {
+                        targetCell.textContent = student.name; // Revert if empty or same
+                    }
+                } else if (targetCell.classList.contains('subject-mark-cell')) {
+                    const subjectId = targetCell.dataset.subjectId;
+                    const maxMarks = parseFloat(targetCell.dataset.maxMarks);
+                    const newValue = parseFloat(targetCell.textContent.trim());
+
+                    // Find original value
+                    const originalValue = student.subjectMarks[subjectId];
+
+                    if (isNaN(newValue) || newValue < 0 || newValue > maxMarks) {
+                        alert(`Invalid mark. Please enter a number between 0 and ${maxMarks}.`);
+                        targetCell.textContent = originalValue !== undefined ? originalValue : ''; // Revert
+                        return;
+                    }
+
+                    if (newValue !== originalValue) {
+                        student.subjectMarks[subjectId] = newValue;
+                        calculateStudentGrades(student); // Recalculate for this student
+                        saveData();
+                        updateTable(); // Re-render the table to show updated total and grade
+                    } else {
+                        targetCell.textContent = originalValue; // Revert if empty or same after parse
                     }
                 }
-                cell.blur();
             }
-        }
+        }, true); // Use capture phase for blur event
 
+        // Allow Enter key to save changes and move focus
+        gradingTableBody.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent new line
+                event.target.blur(); // Trigger blur to save changes
+                // Optional: Move focus to the next editable cell
+                const allEditableCells = Array.from(gradingTableBody.querySelectorAll('.editable'));
+                const currentIndex = allEditableCells.indexOf(event.target);
+                if (currentIndex !== -1 && currentIndex < allEditableCells.length - 1) {
+                    allEditableCells[currentIndex + 1].focus();
+                }
+            }
+        });
 
-        function updateDownloadButtonVisibility() {
-            downloadPdfBtn.style.display = students.length > 0 ? 'inline-block' : 'none';
-        }
 
         // --- PDF Download ---
+        downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
+
         function downloadTableAsPDF() {
-            if (students.length === 0) return;
-
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' for A4 size
 
-            // --- Document Styling ---
-            const docTitle = tableTitle.textContent;
-            const docInstitution = institutionName.textContent;
-            const primaryColor = '#4a90e2'; // Match CSS
-            const headerColor = '#f8f9fa'; // Match CSS
-            const textColor = '#4a4a4a';   // Match CSS
+            const margin = 15;
+            let yPos = margin;
 
-            // Institution Name
+            // Institution Name and Table Title
+            doc.setFontSize(24);
+            doc.setTextColor(44, 62, 80); // Dark Blue
+            doc.text(institutionName, doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+            yPos += 10;
+
             doc.setFontSize(18);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(primaryColor);
-            doc.text(docInstitution, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+            doc.setTextColor(52, 152, 219); // Primary Blue
+            doc.text(tableTitle, doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+            yPos += 15;
 
-            // Table Title
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'normal'); // Normal weight for title
-            doc.setTextColor(textColor);
-            doc.text(docTitle, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            // Overall Summary
+            doc.setFontSize(12);
+            doc.setTextColor(51, 51, 51); // Dark Gray
+            const totalMaxMarks = availableSubjects.reduce((sum, subj) => sum + subj.maxMarks, 0);
+            doc.text(`Total Subjects: ${availableSubjects.length}`, margin, yPos);
+            doc.text(`Overall Possible Marks: ${totalMaxMarks}`, doc.internal.pageSize.width - margin, yPos, { align: 'right' });
+            yPos += 10;
 
-             // Add Total Marks Info
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'italic');
-            doc.setTextColor(textColor);
-            doc.text(`Total Marks: ${totalMarks}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
+            // Prepare table data for autoTable
+            const head = [['Serial', 'Name', ...availableSubjects.map(s => `${s.name} (${s.maxMarks})`), 'Total Marks', 'Overall Grade']];
 
+            const body = students.map((student, index) => {
+                const row = [index + 1, student.name];
+                availableSubjects.forEach(subject => {
+                    row.push(student.subjectMarks[subject.id] !== undefined ? student.subjectMarks[subject.id] : 'N/A');
+                });
+                row.push(student.totalObtainedMarks);
+                row.push(student.overallGradeInfo.grade);
+                return row;
+            });
 
-            // --- Table Data ---
-            const tableColumn = ["Serial", "Name", "Marks", "Grade"];
-            const tableRows = students.map((student, index) => [
-                index + 1,
-                student.name,
-                student.marks, // Already handles decimals
-                student.gradeInfo.grade
-            ]);
-
-            // --- AutoTable Generation ---
             doc.autoTable({
-                head: [tableColumn],
-                body: tableRows,
-                startY: 45, // Start table below title
-                theme: 'grid', // 'striped', 'grid', 'plain'
-                headStyles: {
-                    fillColor: headerColor, // Header background
-                    textColor: textColor,   // Header text
-                    fontStyle: 'bold',
-                    halign: 'center'
-                },
+                startY: yPos,
+                head: head,
+                body: body,
+                theme: 'striped', // 'striped', 'grid', 'plain'
                 styles: {
-                    font: 'helvetica',
                     fontSize: 10,
                     cellPadding: 3,
-                    textColor: textColor,
+                    halign: 'center', // Center align content by default
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [52, 152, 219], // Primary blue
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                bodyStyles: {
+                    textColor: [51, 51, 51],
                 },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 15 }, // Serial
-                    1: { halign: 'left' },                  // Name
-                    2: { halign: 'center', cellWidth: 25 }, // Marks
-                    3: { halign: 'center', cellWidth: 20 }  // Grade
+                    1: { halign: 'left', cellWidth: 40 },  // Name
+                    // Dynamic subject columns start from index 2
+                    // You might want to adjust width based on number of subjects
+                    // Example for first subject: 2: { cellWidth: 25 }
+                    // ...
+                    // Last two columns are Total Marks and Overall Grade
+                    [2 + availableSubjects.length]: { halign: 'center', cellWidth: 25 }, // Total Marks
+                    [2 + availableSubjects.length + 1]: { halign: 'center', cellWidth: 25 } // Overall Grade
                 },
-                didParseCell: function (data) {
-                    // Center align specific columns if theme doesn't do it
-                     if (data.column.index === 0 || data.column.index === 2 || data.column.index === 3) {
-                         data.cell.styles.halign = 'center';
-                     }
-                     // Bold Grade text in PDF
-                     if (data.column.index === 3 && data.row.section === 'body') {
-                        data.cell.styles.fontStyle = 'bold';
-                        // Optional: Add color based on grade (more complex)
-                        // const student = students[data.row.index];
-                        // data.cell.styles.textColor = student.gradeInfo.color; // Can look messy
-                     }
+                didDrawCell: (data) => {
+                    // Example: color grade cells in PDF (similar to HTML)
+                    if (data.section === 'body' && data.column.index === (2 + availableSubjects.length + 1)) {
+                        const student = students[data.row.index];
+                        if (student && student.overallGradeInfo && student.overallGradeInfo.color) {
+                            doc.setTextColor(student.overallGradeInfo.color);
+                            doc.text(data.cell.text, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, { align: 'center', baseline: 'middle' });
+                        }
+                    }
+                },
+                // Add page numbers
+                didDrawPage: (data) => {
+                    doc.setFontSize(10);
+                    doc.setTextColor(150);
+                    doc.text('Page ' + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
                 }
             });
 
-            // --- Save PDF ---
-            const pdfFileName = `${docTitle.replace(/\s+/g, '_') || 'Grading_Table'}.pdf`;
-            doc.save(pdfFileName);
+            doc.save(`${tableTitle.replace(/\s/g, '_')}_Results.pdf`);
         }
 
-        downloadPdfBtn.addEventListener('click', downloadTableAsPDF);
+        // --- Institution/Title Modals ---
+        function openModal(modal, input, currentText) {
+            modal.style.display = 'flex';
+            input.value = currentText;
+            input.focus();
+        }
 
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        editInstitutionBtn.addEventListener('click', () => openModal(institutionModal, newInstitutionNameInput, institutionNameEl.textContent));
+        saveInstitutionBtn.addEventListener('click', () => {
+            const newName = newInstitutionNameInput.value.trim();
+            if (newName) {
+                institutionName = newName;
+                institutionNameEl.textContent = newName;
+                saveData();
+            }
+            closeModal(institutionModal);
+        });
+        cancelInstitutionBtn.addEventListener('click', () => closeModal(institutionModal));
+
+        editTitleBtn.addEventListener('click', () => openModal(titleModal, newTableTitleInput, tableTitleEl.textContent));
+        saveTitleBtn.addEventListener('click', () => {
+            const newTitle = newTableTitleInput.value.trim();
+            if (newTitle) {
+                tableTitle = newTitle;
+                tableTitleEl.textContent = newTitle;
+                saveData();
+            }
+            closeModal(titleModal);
+        });
+        cancelTitleBtn.addEventListener('click', () => closeModal(titleModal));
+
+        // Close modals on outside click
+        window.addEventListener('click', (event) => {
+            if (event.target === institutionModal) closeModal(institutionModal);
+            if (event.target === titleModal) closeModal(titleModal);
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            if (availableSubjects.length > 0) {
+                subjectSetupSection.style.display = 'none';
+                gradingForm.style.display = 'flex';
+                downloadPdfBtn.style.display = 'block';
+                renderStudentSubjectInputs(); // Render subject inputs for the grading form
+                updateTableHeader(); // Build table headers based on loaded subjects
+                updateTable(); // Populate table with loaded students
+            } else {
+                renderSubjectList(); // Show empty subject list display
+                subjectSetupSection.style.display = 'block';
+                gradingForm.style.display = 'none';
+                downloadPdfBtn.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
